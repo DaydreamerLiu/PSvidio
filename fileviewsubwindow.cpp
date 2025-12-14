@@ -6,7 +6,7 @@
 #include <QSizePolicy>
 #include <QDebug>
 #include <QResizeEvent>
-
+#include <QStyle>
 
 
 // Qt6.9.2 构造函数
@@ -129,33 +129,174 @@ void FileViewSubWindow::wheelEvent(QWheelEvent *event)
     updateImageDisplay();
     emit scaleChanged(m_scalePercent);  // 触发主窗口更新Slider（QMdiSubWindow内置信号）
 }
-
+// 格式化时间：毫秒 → 分:秒（如 123000ms → 2:03）
+QString FileViewSubWindow::formatTime(qint64 ms)
+{
+    int seconds = ms / 1000;
+    int minutes = seconds / 60;
+    seconds = seconds % 60;
+    return QString("%1:%2").arg(minutes).arg(seconds, 2, 10, QChar('0'));
+}
 // 加载视频（Qt6.9.2 最新API：使用QAudioOutput控制音量）
 void FileViewSubWindow::loadVideo(const QString &filePath)
 {
-    // 1. 初始化媒体播放器和音频输出（Qt6 必须绑定音频输出）
+    // 1. 初始化媒体播放器和音频输出（Qt6 标准）
     m_mediaPlayer = new QMediaPlayer(this);
-    m_audioOutput = new QAudioOutput(this);  // Qt6 音频输出实例
-    m_mediaPlayer->setAudioOutput(m_audioOutput);  // 绑定音频输出到播放器
+    m_audioOutput = new QAudioOutput(this);
+    m_mediaPlayer->setAudioOutput(m_audioOutput);
 
     // 2. 初始化视频显示控件
     m_videoWidget = new QVideoWidget(this);
+    m_videoWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_videoWidget->setAspectRatioMode(Qt::KeepAspectRatio); // 保持视频比例
     m_mediaPlayer->setVideoOutput(m_videoWidget);
 
-    // 3. 设置媒体源（Qt6 替代原setMedia）
+    // 3. 创建视频控制栏（水平布局）
+    QWidget *controlBar = new QWidget(this);
+    QHBoxLayout *controlLayout = new QHBoxLayout(controlBar);
+    controlLayout->setContentsMargins(15, 10, 15, 10); // 增大边距
+    controlLayout->setSpacing(20); // 增大控件间距
+
+    // 3.1 播放/暂停按钮（带图标，Qt6 原生样式）
+    m_btnPlayPause = new QPushButton(this);
+    m_btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay)); // 初始播放图标
+    m_btnPlayPause->setIconSize(QSize(24, 24));
+    m_btnPlayPause->setFixedSize(36, 36);
+    controlLayout->addWidget(m_btnPlayPause);
+
+    // 3.2 音量控制（标签+滑块）
+    QLabel *volLabel = new QLabel(tr("音量："), this);
+    m_sliderVolume = new QSlider(Qt::Horizontal, this);
+    m_sliderVolume->setRange(0, 100); // 音量范围 0~100（映射到 0.0~1.0）
+    m_sliderVolume->setValue(50);     // 默认50%音量
+    m_sliderVolume->setFixedWidth(120);
+    controlLayout->addWidget(volLabel);
+    controlLayout->addWidget(m_sliderVolume);
+
+    // 3.3 进度条（保持Expanding策略，占满剩余空间）
+    m_sliderProgress = new QSlider(Qt::Horizontal, this);
+    m_sliderProgress->setRange(0, 100);
+    m_sliderProgress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    controlLayout->addWidget(m_sliderProgress);
+
+    // 3.4 时间显示（增大标签宽度）
+    m_labelTime = new QLabel("0:00/0:00", this);
+    m_labelTime->setFixedWidth(100); // 避免时间文字拥挤
+    m_labelTime->setAlignment(Qt::AlignCenter);
+    controlLayout->addWidget(m_labelTime);
+
+    // 4. 复用构造函数的布局，添加视频控件和控制栏
+    QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(m_contentWidget->layout());
+    if (mainLayout) {
+        mainLayout->addWidget(m_videoWidget); // 视频控件占满上方空间
+        mainLayout->addWidget(controlBar);    // 控制栏在下方
+    }
+
+    // 5. 设置媒体源（Qt6 标准）
     m_mediaPlayer->setSource(QUrl::fromLocalFile(filePath));
 
-    // 4. 视频窗口配置
-    m_videoWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_videoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
-    m_contentWidget->layout()->addWidget(m_videoWidget);
+    // 6. 关联信号槽（核心控制逻辑）
+    // 播放/暂停按钮
+    connect(m_btnPlayPause, &QPushButton::clicked, this, &FileViewSubWindow::onPlayPauseClicked);
+    // 音量滑块
+    connect(m_sliderVolume, &QSlider::valueChanged, this, &FileViewSubWindow::onVolumeSliderChanged);
+    // 进度条（拖动时标记，释放时更新位置，避免实时卡顿）
+    connect(m_sliderProgress, &QSlider::sliderPressed, this, [=]() { m_isProgressDragging = true; });
+    connect(m_sliderProgress, &QSlider::sliderReleased, this, &FileViewSubWindow::onProgressSliderReleased);
+    connect(m_sliderProgress, &QSlider::valueChanged, this, &FileViewSubWindow::onProgressSliderChanged);
+    // 播放器状态变化（更新按钮图标）
+    connect(m_mediaPlayer, &QMediaPlayer::playbackStateChanged, this, &FileViewSubWindow::onPlayerStateChanged);
+    // 视频时长加载完成（更新进度条范围）
+    connect(m_mediaPlayer, &QMediaPlayer::durationChanged, this, &FileViewSubWindow::onDurationChanged);
+    // 播放位置变化（更新进度条和时间显示）
+    connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &FileViewSubWindow::onPositionChanged);
 
-    // 5. Qt6 音量控制（通过QAudioOutput设置，范围0.0~1.0）
-    m_audioOutput->setVolume(0.5);  // 50% 音量（替代原setVolume(50)）
+    // 7. 初始音量设置
+    m_audioOutput->setVolume(0.5); // 50% 音量（Qt6 范围 0.0~1.0）
 
-    // 6. 自动播放
+    // 8. 自动播放
     m_mediaPlayer->play();
 
-    // 调试信息（可选）
     qDebug() << "视频加载成功：" << filePath;
+}
+
+// ========== 视频控制槽函数实现 ==========
+// 播放/暂停切换
+void FileViewSubWindow::onPlayPauseClicked()
+{
+    if (!m_mediaPlayer) return;
+
+    if (m_mediaPlayer->playbackState() == QMediaPlayer::PlayingState) {
+        m_mediaPlayer->pause(); // 暂停
+    } else {
+        m_mediaPlayer->play();  // 播放
+    }
+}
+
+// 音量调节（滑块值 0~100 → 映射到 0.0~1.0）
+void FileViewSubWindow::onVolumeSliderChanged(int value)
+{
+    if (!m_audioOutput) return;
+    m_audioOutput->setVolume(value / 100.0); // Qt6 音量范围 0.0~1.0
+}
+
+// 进度条拖动（仅记录值，释放时更新）
+void FileViewSubWindow::onProgressSliderChanged(int value)
+{
+    if (!m_mediaPlayer || m_isProgressDragging) return; // 拖动时不实时更新，避免卡顿
+}
+
+// 进度条释放（更新视频播放位置）
+void FileViewSubWindow::onProgressSliderReleased()
+{
+    if (!m_mediaPlayer) return;
+
+    m_isProgressDragging = false;
+    qint64 duration = m_mediaPlayer->duration();
+    if (duration <= 0) return;
+
+    // 计算目标位置（进度条值 → 毫秒）
+    qint64 targetPos = (m_sliderProgress->value() * duration) / 100;
+    m_mediaPlayer->setPosition(targetPos); // 更新播放位置
+}
+
+// 播放状态变化（更新按钮图标）
+void FileViewSubWindow::onPlayerStateChanged(QMediaPlayer::PlaybackState state)
+{
+    if (!m_btnPlayPause) return;
+
+    if (state == QMediaPlayer::PlayingState) {
+        // 播放中 → 显示暂停图标
+        m_btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    } else {
+        // 暂停/停止 → 显示播放图标
+        m_btnPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    }
+}
+
+// 视频时长加载完成（更新进度条范围）
+void FileViewSubWindow::onDurationChanged(qint64 duration)
+{
+    if (!m_sliderProgress || !m_labelTime) return;
+
+    // 进度条范围设为 0~100（百分比），方便计算
+    m_sliderProgress->setRange(0, 100);
+    // 更新总时长显示
+    m_labelTime->setText(QString("%1/%2").arg("0:00").arg(formatTime(duration)));
+}
+
+// 播放位置变化（更新进度条和时间显示）
+void FileViewSubWindow::onPositionChanged(qint64 position)
+{
+    if (!m_sliderProgress || !m_labelTime || m_isProgressDragging) return;
+
+    qint64 duration = m_mediaPlayer->duration();
+    if (duration <= 0) return;
+
+    // 计算进度百分比（0~100）
+    int progress = qRound((position * 100.0) / duration);
+    m_sliderProgress->setValue(progress);
+
+    // 更新时间显示（当前/总时长）
+    m_labelTime->setText(QString("%1/%2").arg(formatTime(position)).arg(formatTime(duration)));
 }

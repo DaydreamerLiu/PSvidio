@@ -12,6 +12,10 @@
 #include <QUrl>
 #include <QWheelEvent>
 #include <QImage>
+#include <QPushButton>
+#include <QSlider>
+#include <QHBoxLayout>
+#include <QString>
 
 class FileViewSubWindow final : public QMdiSubWindow
 {
@@ -34,11 +38,24 @@ protected:
 signals:
     void scaleChanged(int percent);  // 缩放比例变化时触发，携带当前比例
 
+
+private slots:
+    // 新增视频控制槽函数
+    void onPlayPauseClicked();       // 播放/暂停切换
+    void onVolumeSliderChanged(int value); // 音量调节
+    void onProgressSliderChanged(int value); // 进度条拖动
+    void onProgressSliderReleased(); // 进度条释放（避免实时卡顿）
+    void onPlayerStateChanged(QMediaPlayer::PlaybackState state); // 播放状态变化
+    void onDurationChanged(qint64 duration); // 视频时长变化
+    void onPositionChanged(qint64 position); // 播放位置变化
+
 private:
     // 加载媒体文件的私有方法
     void loadImage(const QString &filePath);  // 加载图片（JPG/PNG/BMP）
     void loadVideo(const QString &filePath);  // 加载视频（MP4/AVI/MOV）
     void updateImageDisplay();  // 刷新图片显示（核心：保持比例）
+    // 新增：格式化时间（毫秒转 分:秒，如 1:23）
+    QString formatTime(qint64 ms);
 
     // 缩放相关成员变量
     QImage m_originalImage;     // 保存原始图片（避免多次缩放失真）
@@ -47,9 +64,15 @@ private:
     // 成员变量：使用前向声明+初始化，遵循Qt6内存管理（父子机制）
     QWidget *m_contentWidget = nullptr;
     QLabel *m_imageLabel = nullptr;
+    // 视频相关成员
     QMediaPlayer *m_mediaPlayer = nullptr;
     QVideoWidget *m_videoWidget = nullptr;
     QAudioOutput *m_audioOutput = nullptr;   // Qt6 音频输出（替代原setVolume）
+    QPushButton *m_btnPlayPause = nullptr; // 播放/暂停按钮
+    QSlider *m_sliderVolume = nullptr;     // 音量滑块（0~100）
+    QSlider *m_sliderProgress = nullptr;   // 进度条（0~视频时长）
+    QLabel *m_labelTime = nullptr;         // 时间显示（当前/总时长）
+    bool m_isProgressDragging = false;     // 进度条拖动标记（避免卡顿）
 };
 
 #endif // FILEVIEWSUBWINDOW_H
