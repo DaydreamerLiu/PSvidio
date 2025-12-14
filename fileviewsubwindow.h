@@ -9,6 +9,9 @@
 #include <QVBoxLayout>
 #include <QFileInfo>
 #include <QAudioOutput>
+#include <QUrl>
+#include <QWheelEvent>
+#include <QImage>
 
 class FileViewSubWindow final : public QMdiSubWindow
 {
@@ -20,10 +23,26 @@ public:
     explicit FileViewSubWindow(const QString &filePath, QWidget *parent = nullptr);
     ~FileViewSubWindow() override = default;  // 显式默认析构，符合现代C++
 
+    // 对外暴露缩放接口（供MainWindow的Slider调用）
+    void setScaleFactor(int percent);  // 入参：1~500（对应1%~500%）
+    int currentScalePercent() const;   // 获取当前缩放比例（%）
+
+protected:
+    // 重写滚轮事件：实现鼠标滚轮缩放
+    void wheelEvent(QWheelEvent *event) override;
+
+signals:
+    void scaleChanged(int percent);  // 缩放比例变化时触发，携带当前比例
+
 private:
     // 加载媒体文件的私有方法
     void loadImage(const QString &filePath);  // 加载图片（JPG/PNG/BMP）
     void loadVideo(const QString &filePath);  // 加载视频（MP4/AVI/MOV）
+    void updateImageDisplay();  // 刷新图片显示（核心：保持比例）
+
+    // 缩放相关成员变量
+    QImage m_originalImage;     // 保存原始图片（避免多次缩放失真）
+    int m_scalePercent = 100;   // 当前缩放比例（默认100%）
 
     // 成员变量：使用前向声明+初始化，遵循Qt6内存管理（父子机制）
     QWidget *m_contentWidget = nullptr;

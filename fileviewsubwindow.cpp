@@ -5,6 +5,9 @@
 #include <QFileInfo>
 #include <QSizePolicy>
 #include <QDebug>
+#include <QResizeEvent>
+
+
 
 // Qt6.9.2 构造函数
 FileViewSubWindow::FileViewSubWindow(const QString &filePath, QWidget *parent)
@@ -39,24 +42,92 @@ FileViewSubWindow::FileViewSubWindow(const QString &filePath, QWidget *parent)
     }
 }
 
-// 加载图片（无修改，Qt6.9.2 兼容）
+// 核心：加载图片（保持原始比例，初始适配窗口）
 void FileViewSubWindow::loadImage(const QString &filePath)
 {
+    // 1. 加载原始图片（保存到成员变量，避免多次缩放失真）
+    m_originalImage = QImage(filePath);
+    if (m_originalImage.isNull()) {
+        m_imageLabel = new QLabel(tr("图片加载失败：%1").arg(filePath), this);
+        m_imageLabel->setAlignment(Qt::AlignCenter);
+        m_contentWidget->layout()->addWidget(m_imageLabel);
+        return;
+    }
+
+    // 2. 初始化图片显示标签
     m_imageLabel = new QLabel(this);
-    QPixmap pixmap(filePath);
-
-    m_imageLabel->setPixmap(pixmap.scaled(m_imageLabel->size(),
-                                          Qt::KeepAspectRatio,
-                                          Qt::SmoothTransformation));
-    m_imageLabel->setScaledContents(true);
     m_imageLabel->setAlignment(Qt::AlignCenter);
+    m_imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
+    // 3. 滚动区域配置（原生适配高DPI）
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidget(m_imageLabel);
     scrollArea->setWidgetResizable(true);
     scrollArea->setFrameShape(QFrame::NoFrame);
-
+    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_contentWidget->layout()->addWidget(scrollArea);
+
+    // 4. 初始缩放：适配窗口（图片最大边不超过窗口，保持比例）
+    QSize windowSize = this->size() * 0.9;  // 留10%边距
+    QSize imageSize = m_originalImage.size();
+    imageSize.scale(windowSize, Qt::KeepAspectRatio);  // 按窗口适配比例
+    m_scalePercent = qRound((imageSize.width() * 100.0) / m_originalImage.width());
+    updateImageDisplay();
+}
+
+// 核心：更新图片显示（保持比例，按当前缩放比例渲染）
+void FileViewSubWindow::updateImageDisplay()
+{
+    if (m_originalImage.isNull() || !m_imageLabel) return;
+
+    // 计算缩放后的尺寸（保持原始比例）
+    qreal scale = m_scalePercent / 100.0;
+    QSize scaledSize = m_originalImage.size() * scale;
+
+    // 高质量缩放（Qt6最优算法，无模糊）
+    QPixmap scaledPixmap = QPixmap::fromImage(m_originalImage.scaled(
+        scaledSize,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation
+        ));
+
+    // 显示图片（居中，不拉伸）
+    m_imageLabel->setPixmap(scaledPixmap);
+    m_imageLabel->adjustSize();  // 适配图片尺寸
+}
+
+// 对外接口：设置缩放比例（1~500%）
+void FileViewSubWindow::setScaleFactor(int percent)
+{
+    // 限制范围：1% ~ 500%
+    m_scalePercent = qBound(1, percent, 500);
+    updateImageDisplay();
+}
+
+// 获取当前缩放比例（%）
+int FileViewSubWindow::currentScalePercent() const
+{
+    return m_scalePercent;
+}
+
+// 重写滚轮事件：鼠标滚轮缩放（向上=放大，向下=缩小）
+void FileViewSubWindow::wheelEvent(QWheelEvent *event)
+{
+    // 仅图片模式下响应滚轮
+    if (m_originalImage.isNull()) {
+        QMdiSubWindow::wheelEvent(event);
+        return;
+    }
+
+    // 滚轮每步调整5%
+    int delta = event->angleDelta().y() > 0 ? 5 : -5;
+    int newPercent = m_scalePercent + delta;
+    newPercent = qBound(1, newPercent, 500);  // 限制范围
+
+    // 更新缩放并通知主窗口Slider同步
+    m_scalePercent = newPercent;
+    updateImageDisplay();
+    emit scaleChanged(m_scalePercent);  // 触发主窗口更新Slider（QMdiSubWindow内置信号）
 }
 
 // 加载视频（Qt6.9.2 最新API：使用QAudioOutput控制音量）

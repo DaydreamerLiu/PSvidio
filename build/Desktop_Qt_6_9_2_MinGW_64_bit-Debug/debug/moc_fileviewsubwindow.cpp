@@ -39,10 +39,17 @@ template <> constexpr inline auto FileViewSubWindow::qt_create_metaobjectdata<qt
 {
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
-        "FileViewSubWindow"
+        "FileViewSubWindow",
+        "scaleChanged",
+        "",
+        "percent"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'scaleChanged'
+        QtMocHelpers::SignalData<void(int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 3 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -64,10 +71,16 @@ Q_CONSTINIT const QMetaObject FileViewSubWindow::staticMetaObject = { {
 void FileViewSubWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     auto *_t = static_cast<FileViewSubWindow *>(_o);
-    (void)_t;
-    (void)_c;
-    (void)_id;
-    (void)_a;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->scaleChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (FileViewSubWindow::*)(int )>(_a, &FileViewSubWindow::scaleChanged, 0))
+            return;
+    }
 }
 
 const QMetaObject *FileViewSubWindow::metaObject() const
@@ -86,6 +99,24 @@ void *FileViewSubWindow::qt_metacast(const char *_clname)
 int FileViewSubWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QMdiSubWindow::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 1)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 1;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 1)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 1;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void FileViewSubWindow::scaleChanged(int _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP

@@ -31,6 +31,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// 获取当前激活的图片子窗口（过滤视频窗口）
+FileViewSubWindow* MainWindow::currentImageSubWindow()
+{
+    QMdiSubWindow *activeWin = ui->mdiArea->activeSubWindow();
+    if (!activeWin) return nullptr;
+    // 转换为自定义子窗口类型
+    return qobject_cast<FileViewSubWindow*>(activeWin->widget()->parentWidget());
+}
+
 void MainWindow::on_actionNew_new_triggered()
 {
 
@@ -63,5 +72,36 @@ void MainWindow::on_actionOpen_O_triggered()
     if (!ui->mdiArea->subWindowList().isEmpty()) {
         ui->mdiArea->setActiveSubWindow(ui->mdiArea->subWindowList().first());
     }
+}
+
+
+void MainWindow::on_horizontalSliderScale_valueChanged(int value)
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 更新图片缩放
+    imageWin->setScaleFactor(value);
+    // 实时显示当前缩放比例
+    ui->labelScale->setText(tr("当前缩放：%1%").arg(value));
+}
+
+
+void MainWindow::on_mdiArea_subWindowActivated(QMdiSubWindow *arg1)
+{
+    Q_UNUSED(arg1);
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) {
+        // 无图片窗口时禁用Slider
+        ui->horizontalSliderScale->setEnabled(false);
+        ui->labelScale->setText(tr("当前缩放：--"));
+        return;
+    }
+
+    // 启用Slider并同步当前缩放比例
+    ui->horizontalSliderScale->setEnabled(true);
+    int currentPercent = imageWin->currentScalePercent();
+    ui->horizontalSliderScale->setValue(currentPercent);
+    ui->labelScale->setText(tr("当前缩放：%1%").arg(currentPercent));
 }
 

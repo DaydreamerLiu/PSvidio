@@ -14,10 +14,12 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMdiArea>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
@@ -37,12 +39,14 @@ public:
     QStatusBar *statusbar;
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
+    QSlider *horizontalSliderScale;
+    QLabel *labelScale;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(919, 599);
+        MainWindow->resize(947, 604);
         actionNew_new = new QAction(MainWindow);
         actionNew_new->setObjectName("actionNew_new");
         actionOpen_O = new QAction(MainWindow);
@@ -59,7 +63,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 919, 19));
+        menubar->setGeometry(QRect(0, 0, 947, 19));
         menu_F = new QMenu(menubar);
         menu_F->setObjectName("menu_F");
         menu_E = new QMenu(menubar);
@@ -72,6 +76,18 @@ public:
         dockWidget->setObjectName("dockWidget");
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName("dockWidgetContents");
+        horizontalSliderScale = new QSlider(dockWidgetContents);
+        horizontalSliderScale->setObjectName("horizontalSliderScale");
+        horizontalSliderScale->setGeometry(QRect(20, 510, 141, 16));
+        horizontalSliderScale->setMinimum(1);
+        horizontalSliderScale->setMaximum(500);
+        horizontalSliderScale->setValue(100);
+        horizontalSliderScale->setOrientation(Qt::Orientation::Horizontal);
+        horizontalSliderScale->setTickPosition(QSlider::TickPosition::TicksBelow);
+        horizontalSliderScale->setTickInterval(50);
+        labelScale = new QLabel(dockWidgetContents);
+        labelScale->setObjectName("labelScale");
+        labelScale->setGeometry(QRect(20, 490, 141, 16));
         dockWidget->setWidget(dockWidgetContents);
         MainWindow->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, dockWidget);
 
@@ -93,6 +109,7 @@ public:
         menu_F->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266(&F)", nullptr));
         menu_E->setTitle(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", nullptr));
         dockWidget->setWindowTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\347\256\261", nullptr));
+        labelScale->setText(QCoreApplication::translate("MainWindow", "\345\275\223\345\211\215\347\274\251\346\224\276\357\274\232100%", nullptr));
     } // retranslateUi
 
 };
