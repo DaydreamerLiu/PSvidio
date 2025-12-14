@@ -19,6 +19,23 @@ MainWindow::MainWindow(QWidget *parent)
     ui->mdiArea->setTabPosition(QTabWidget::North);  // 标签在顶部（Qt6 正确枚举）
     ui->mdiArea->setTabShape(QTabWidget::Rounded);   // 圆角标签（Qt6 美化）
 
+    // 找到MDI区域内的标签栏（QTabWidget）
+    QTabWidget *mdiTabBar = ui->mdiArea->findChild<QTabWidget*>();
+    if (mdiTabBar) {
+        // 关联QTabWidget的关闭信号 → 关闭对应MDI子窗口
+        connect(mdiTabBar, &QTabWidget::tabCloseRequested, this, [=](int index) {
+            // 确保索引有效
+            if (index >= 0 && index < ui->mdiArea->subWindowList().size()) {
+                QMdiSubWindow *subWin = ui->mdiArea->subWindowList().at(index);
+                if (subWin) {
+                    subWin->close();       // 关闭子窗口（自动从MDI移除）
+                    subWin->deleteLater(); // 安全销毁，避免内存泄漏
+                }
+            }
+        });
+    }
+
+
     // 4. MDI窗口行为优化
     ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -64,6 +81,7 @@ void MainWindow::on_actionOpen_O_triggered()
     // 为每个文件创建MDI子窗口
     for (const QString &filePath : filePaths) {
         FileViewSubWindow *subWindow = new FileViewSubWindow(filePath, this);
+        subWindow->setAttribute(Qt::WA_DeleteOnClose);
         ui->mdiArea->addSubWindow(subWindow);
         subWindow->showMaximized();  // 默认为最大化状态
     }

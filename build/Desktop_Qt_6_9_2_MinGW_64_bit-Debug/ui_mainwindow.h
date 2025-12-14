@@ -20,7 +20,9 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QSlider>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -39,8 +41,10 @@ public:
     QStatusBar *statusbar;
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
-    QSlider *horizontalSliderScale;
+    QVBoxLayout *verticalLayout;
+    QSpacerItem *verticalSpacer;
     QLabel *labelScale;
+    QSlider *horizontalSliderScale;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -76,18 +80,29 @@ public:
         dockWidget->setObjectName("dockWidget");
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName("dockWidgetContents");
+        verticalLayout = new QVBoxLayout(dockWidgetContents);
+        verticalLayout->setObjectName("verticalLayout");
+        verticalSpacer = new QSpacerItem(20, 490, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer);
+
+        labelScale = new QLabel(dockWidgetContents);
+        labelScale->setObjectName("labelScale");
+
+        verticalLayout->addWidget(labelScale);
+
         horizontalSliderScale = new QSlider(dockWidgetContents);
         horizontalSliderScale->setObjectName("horizontalSliderScale");
-        horizontalSliderScale->setGeometry(QRect(20, 510, 141, 16));
         horizontalSliderScale->setMinimum(1);
         horizontalSliderScale->setMaximum(500);
+        horizontalSliderScale->setSingleStep(15);
         horizontalSliderScale->setValue(100);
         horizontalSliderScale->setOrientation(Qt::Orientation::Horizontal);
         horizontalSliderScale->setTickPosition(QSlider::TickPosition::TicksBelow);
         horizontalSliderScale->setTickInterval(50);
-        labelScale = new QLabel(dockWidgetContents);
-        labelScale->setObjectName("labelScale");
-        labelScale->setGeometry(QRect(20, 490, 141, 16));
+
+        verticalLayout->addWidget(horizontalSliderScale);
+
         dockWidget->setWidget(dockWidgetContents);
         MainWindow->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, dockWidget);
 
