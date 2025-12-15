@@ -68,7 +68,9 @@ void FileViewSubWindow::loadImage(const QString &filePath)
     m_contentWidget->layout()->addWidget(scrollArea);
 
     // 4. 初始缩放：适配窗口（图片最大边不超过窗口，保持比例）
-    QSize windowSize = this->size() * 0.9;  // 留10%边距
+    QSize windowSize = this->size() * 20;  // 留10%边距
+    qDebug() << "this->size()" << this->size();
+    qDebug() << "初始比例：" << windowSize;
     QSize imageSize = m_originalImage.size();
     imageSize.scale(windowSize, Qt::KeepAspectRatio);  // 按窗口适配比例
     m_scalePercent = qRound((imageSize.width() * 100.0) / m_originalImage.width());

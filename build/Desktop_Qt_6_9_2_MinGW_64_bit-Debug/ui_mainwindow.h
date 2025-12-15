@@ -82,7 +82,7 @@ public:
         dockWidgetContents->setObjectName("dockWidgetContents");
         verticalLayout = new QVBoxLayout(dockWidgetContents);
         verticalLayout->setObjectName("verticalLayout");
-        verticalSpacer = new QSpacerItem(20, 490, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+        verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
 
         verticalLayout->addItem(verticalSpacer);
 
