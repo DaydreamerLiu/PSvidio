@@ -16,6 +16,8 @@
 #include <QSlider>
 #include <QHBoxLayout>
 #include <QString>
+#include <QList>
+#include "imagecommand.h"
 
 class FileViewSubWindow final : public QMdiSubWindow
 {
@@ -49,6 +51,17 @@ private slots:
     void onDurationChanged(qint64 duration); // 视频时长变化
     void onPositionChanged(qint64 position); // 播放位置变化
 
+public:
+    // 获取当前图像
+    QImage getCurrentImage() const;
+
+    // 图像处理相关方法
+    void applyImageCommand(ImageCommand *command);
+    bool canUndo() const;
+    bool canRedo() const;
+    void undo();
+    void redo();
+
 private:
     // 加载媒体文件的私有方法
     void loadImage(const QString &filePath);  // 加载图片（JPG/PNG/BMP）
@@ -58,8 +71,13 @@ private:
     QString formatTime(qint64 ms);
 
     // 缩放相关成员变量
-    QImage m_originalImage;     // 保存原始图片（避免多次缩放失真）
+    QImage m_originalImage;     // 保存原始图片
+    QImage m_currentImage;      // 当前显示的图片
     int m_scalePercent = 100;   // 当前缩放比例（默认100%）
+
+    // 命令历史记录
+    QList<ImageCommand*> m_commandHistory;
+    int m_historyIndex = -1;     // 当前历史记录索引
 
     // 成员变量：使用前向声明+初始化，遵循Qt6内存管理（父子机制）
     QWidget *m_contentWidget = nullptr;

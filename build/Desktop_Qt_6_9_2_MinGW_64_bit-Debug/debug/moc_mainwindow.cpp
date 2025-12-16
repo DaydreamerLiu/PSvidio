@@ -47,7 +47,17 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "value",
         "on_mdiArea_subWindowActivated",
         "QMdiSubWindow*",
-        "arg1"
+        "arg1",
+        "on_action_G_triggered",
+        "on_action_T_triggered",
+        "on_action_2_triggered",
+        "on_action_3_triggered",
+        "on_action_4_triggered",
+        "on_action_Z_triggered",
+        "on_action_Y_triggered",
+        "on_binaryThresholdSlider_valueChanged",
+        "on_gammaValueSlider_valueChanged",
+        "on_edgeThresholdSlider_valueChanged"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -62,6 +72,32 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         // Slot 'on_mdiArea_subWindowActivated'
         QtMocHelpers::SlotData<void(QMdiSubWindow *)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { 0x80000000 | 7, 8 },
+        }}),
+        // Slot 'on_action_G_triggered'
+        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_action_T_triggered'
+        QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_action_2_triggered'
+        QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_action_3_triggered'
+        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_action_4_triggered'
+        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_action_Z_triggered'
+        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_action_Y_triggered'
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_binaryThresholdSlider_valueChanged'
+        QtMocHelpers::SlotData<void(int)>(16, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 5 },
+        }}),
+        // Slot 'on_gammaValueSlider_valueChanged'
+        QtMocHelpers::SlotData<void(int)>(17, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 5 },
+        }}),
+        // Slot 'on_edgeThresholdSlider_valueChanged'
+        QtMocHelpers::SlotData<void(int)>(18, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 5 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -90,6 +126,16 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 1: _t->on_actionOpen_O_triggered(); break;
         case 2: _t->on_horizontalSliderScale_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 3: _t->on_mdiArea_subWindowActivated((*reinterpret_cast< std::add_pointer_t<QMdiSubWindow*>>(_a[1]))); break;
+        case 4: _t->on_action_G_triggered(); break;
+        case 5: _t->on_action_T_triggered(); break;
+        case 6: _t->on_action_2_triggered(); break;
+        case 7: _t->on_action_3_triggered(); break;
+        case 8: _t->on_action_4_triggered(); break;
+        case 9: _t->on_action_Z_triggered(); break;
+        case 10: _t->on_action_Y_triggered(); break;
+        case 11: _t->on_binaryThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 12: _t->on_gammaValueSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 13: _t->on_edgeThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -126,14 +172,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 14)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 14;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 14)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 14;
     }
     return _id;
 }

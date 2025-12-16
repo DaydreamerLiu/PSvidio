@@ -27,9 +27,34 @@ private slots:
 
     void on_mdiArea_subWindowActivated(QMdiSubWindow *arg1);
 
+    // 图像处理相关槽函数
+    void on_action_G_triggered();
+    void on_action_T_triggered();
+    void on_action_2_triggered();
+    void on_action_3_triggered();
+    void on_action_4_triggered();
+
+    // 撤销重做相关槽函数
+    void on_action_Z_triggered();
+    void on_action_Y_triggered();
+
+    // 滑块控件相关槽函数
+    void on_binaryThresholdSlider_valueChanged(int value);
+    void on_gammaValueSlider_valueChanged(int value);
+    void on_edgeThresholdSlider_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     // 获取当前激活的图片子窗口（过滤视频窗口）
     FileViewSubWindow* currentImageSubWindow();
+
+    // 工具栏滑块控件
+    QSlider *m_binaryThresholdSlider;
+    QSlider *m_gammaValueSlider;
+    QSlider *m_edgeThresholdSlider;
+    // 滑块当前值
+    int m_binaryThreshold;
+    double m_gammaValue;
+    int m_edgeThreshold;
 };
 #endif // MAINWINDOW_H

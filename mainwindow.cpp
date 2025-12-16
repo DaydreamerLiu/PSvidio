@@ -1,11 +1,21 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileviewsubwindow.h" // 包含自定义子窗口头文件
+#include "grayscalecommand.h"
+#include "binarycommand.h"
+#include "meanfiltercommand.h"
+#include "gammacorrectioncommand.h"
+#include "edgedetectioncommand.h"
 #include <QFileDialog>
+#include <QToolBar>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_binaryThreshold(128)
+    , m_gammaValue(1.0)
+    , m_edgeThreshold(50)
 {
     ui->setupUi(this);
 
@@ -41,6 +51,41 @@ MainWindow::MainWindow(QWidget *parent)
     ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     // 打印Qt版本（调试用，Qt6.9.2 宏QT_VERSION_STR）
     qDebug() << "Qt 版本：" << QT_VERSION_STR;
+
+    // 5. 添加工具栏滑块控件
+    // 创建一个新的工具栏用于放置滑块控件
+    QToolBar *toolBar = addToolBar("ImageToolBar");
+    toolBar->setVisible(true); // 确保工具栏默认可见
+    
+    // 二值化阈值滑块
+    m_binaryThresholdSlider = new QSlider(Qt::Horizontal, this);
+    m_binaryThresholdSlider->setRange(0, 255);
+    m_binaryThresholdSlider->setValue(m_binaryThreshold);
+    m_binaryThresholdSlider->setToolTip("二值化阈值 (0-255)");
+    m_binaryThresholdSlider->setVisible(false); // 默认隐藏
+    connect(m_binaryThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_binaryThresholdSlider_valueChanged);
+    toolBar->addWidget(new QLabel("二值化阈值：", this));
+    toolBar->addWidget(m_binaryThresholdSlider);
+
+    // 伽马变换值滑块
+    m_gammaValueSlider = new QSlider(Qt::Horizontal, this);
+    m_gammaValueSlider->setRange(1, 30); // 1-30表示1.0-3.0
+    m_gammaValueSlider->setValue(m_gammaValue * 10);
+    m_gammaValueSlider->setToolTip("伽马值 (1.0-3.0)");
+    m_gammaValueSlider->setVisible(false); // 默认隐藏
+    connect(m_gammaValueSlider, &QSlider::valueChanged, this, &MainWindow::on_gammaValueSlider_valueChanged);
+    toolBar->addWidget(new QLabel("伽马值：", this));
+    toolBar->addWidget(m_gammaValueSlider);
+
+    // 边缘检测阈值滑块
+    m_edgeThresholdSlider = new QSlider(Qt::Horizontal, this);
+    m_edgeThresholdSlider->setRange(0, 200); // 0-200的阈值范围
+    m_edgeThresholdSlider->setValue(m_edgeThreshold);
+    m_edgeThresholdSlider->setToolTip("边缘检测阈值 (0-200)");
+    m_edgeThresholdSlider->setVisible(false); // 默认隐藏
+    connect(m_edgeThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_edgeThresholdSlider_valueChanged);
+    toolBar->addWidget(new QLabel("边缘阈值：", this));
+    toolBar->addWidget(m_edgeThresholdSlider);
 }
 
 MainWindow::~MainWindow()
@@ -121,5 +166,126 @@ void MainWindow::on_mdiArea_subWindowActivated(QMdiSubWindow *arg1)
     int currentPercent = imageWin->currentScalePercent();
     ui->horizontalSliderScale->setValue(currentPercent);
     ui->labelScale->setText(tr("当前缩放：%1%").arg(currentPercent));
+}
+
+// 灰度化
+void MainWindow::on_action_G_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 隐藏其他滑块控件
+    m_binaryThresholdSlider->setVisible(false);
+    m_gammaValueSlider->setVisible(false);
+
+    // 创建并应用灰度化命令
+    imageWin->applyImageCommand(new GrayscaleCommand(imageWin->getCurrentImage()));
+}
+
+// 二值化
+void MainWindow::on_action_T_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 显示二值化阈值滑块，隐藏其他滑块
+    m_binaryThresholdSlider->setVisible(true);
+    m_gammaValueSlider->setVisible(false);
+
+    // 创建并应用二值化命令
+    imageWin->applyImageCommand(new BinaryCommand(imageWin->getCurrentImage(), m_binaryThreshold));
+}
+
+// 3×3均值滤波
+void MainWindow::on_action_2_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 隐藏所有滑块控件
+    m_binaryThresholdSlider->setVisible(false);
+    m_gammaValueSlider->setVisible(false);
+
+    // 创建并应用均值滤波命令
+    imageWin->applyImageCommand(new MeanFilterCommand(imageWin->getCurrentImage()));
+}
+
+// 伽马变换
+void MainWindow::on_action_3_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 显示伽马值滑块，隐藏其他滑块
+    m_binaryThresholdSlider->setVisible(false);
+    m_gammaValueSlider->setVisible(true);
+
+    // 创建并应用伽马变换命令
+    imageWin->applyImageCommand(new GammaCorrectionCommand(imageWin->getCurrentImage(), m_gammaValue));
+}
+
+// 边缘检测
+void MainWindow::on_action_4_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 显示边缘检测阈值滑块，隐藏其他滑块
+    m_binaryThresholdSlider->setVisible(false);
+    m_gammaValueSlider->setVisible(false);
+    m_edgeThresholdSlider->setVisible(true);
+
+    // 创建并应用边缘检测命令
+    imageWin->applyImageCommand(new EdgeDetectionCommand(imageWin->getCurrentImage(), m_edgeThreshold));
+}
+
+// 撤销
+void MainWindow::on_action_Z_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    imageWin->undo();
+}
+
+// 重做
+void MainWindow::on_action_Y_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    imageWin->redo();
+}
+
+// 二值化阈值滑块变化
+void MainWindow::on_binaryThresholdSlider_valueChanged(int value)
+{
+    m_binaryThreshold = value;
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 重新应用二值化命令
+    imageWin->applyImageCommand(new BinaryCommand(imageWin->getCurrentImage(), m_binaryThreshold));
+}
+
+// 伽马值滑块变化
+void MainWindow::on_gammaValueSlider_valueChanged(int value)
+{
+    m_gammaValue = value / 10.0;
+    
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+    
+    imageWin->applyImageCommand(new GammaCorrectionCommand(imageWin->getCurrentImage(), m_gammaValue));
+}
+
+void MainWindow::on_edgeThresholdSlider_valueChanged(int value)
+{
+    m_edgeThreshold = value;
+    
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+    
+    imageWin->applyImageCommand(new EdgeDetectionCommand(imageWin->getCurrentImage(), m_edgeThreshold));
 }
 

@@ -45,7 +45,7 @@ FileViewSubWindow::FileViewSubWindow(const QString &filePath, QWidget *parent)
 // 核心：加载图片（保持原始比例，初始适配窗口）
 void FileViewSubWindow::loadImage(const QString &filePath)
 {
-    // 1. 加载原始图片（保存到成员变量，避免多次缩放失真）
+    // 1. 加载原始图片（保存到成员变量）
     m_originalImage = QImage(filePath);
     if (m_originalImage.isNull()) {
         m_imageLabel = new QLabel(tr("图片加载失败：%1").arg(filePath), this);
@@ -67,27 +67,32 @@ void FileViewSubWindow::loadImage(const QString &filePath)
     scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_contentWidget->layout()->addWidget(scrollArea);
 
-    // 4. 初始缩放：适配窗口（图片最大边不超过窗口，保持比例）
+    // 4. 初始化当前图片和命令历史
+    m_currentImage = m_originalImage;
+    m_commandHistory.clear();
+    m_historyIndex = -1;
+
+    // 5. 初始缩放：适配窗口（图片最大边不超过窗口，保持比例）
     QSize windowSize = this->size() * 20;  // 留10%边距
     qDebug() << "this->size()" << this->size();
     qDebug() << "初始比例：" << windowSize;
-    QSize imageSize = m_originalImage.size();
+    QSize imageSize = m_currentImage.size();
     imageSize.scale(windowSize, Qt::KeepAspectRatio);  // 按窗口适配比例
-    m_scalePercent = qRound((imageSize.width() * 100.0) / m_originalImage.width());
+    m_scalePercent = qRound((imageSize.width() * 100.0) / m_currentImage.width());
     updateImageDisplay();
 }
 
 // 核心：更新图片显示（保持比例，按当前缩放比例渲染）
 void FileViewSubWindow::updateImageDisplay()
 {
-    if (m_originalImage.isNull() || !m_imageLabel) return;
+    if (m_currentImage.isNull() || !m_imageLabel) return;
 
     // 计算缩放后的尺寸（保持原始比例）
     qreal scale = m_scalePercent / 100.0;
-    QSize scaledSize = m_originalImage.size() * scale;
+    QSize scaledSize = m_currentImage.size() * scale;
 
     // 高质量缩放（Qt6最优算法，无模糊）
-    QPixmap scaledPixmap = QPixmap::fromImage(m_originalImage.scaled(
+    QPixmap scaledPixmap = QPixmap::fromImage(m_currentImage.scaled(
         scaledSize,
         Qt::KeepAspectRatio,
         Qt::SmoothTransformation
@@ -96,6 +101,73 @@ void FileViewSubWindow::updateImageDisplay()
     // 显示图片（居中，不拉伸）
     m_imageLabel->setPixmap(scaledPixmap);
     m_imageLabel->adjustSize();  // 适配图片尺寸
+}
+
+// 应用图像处理命令
+void FileViewSubWindow::applyImageCommand(ImageCommand *command)
+{
+    if (!command || m_currentImage.isNull()) return;
+
+    // 清除当前历史记录之后的命令
+    while (m_historyIndex < m_commandHistory.size() - 1) {
+        delete m_commandHistory.takeLast();
+    }
+
+    // 添加新命令到历史记录
+    m_commandHistory.append(command);
+    m_historyIndex++;
+
+    // 执行命令并更新当前图片
+    m_currentImage = command->execute();
+    updateImageDisplay();
+}
+
+// 检查是否可以撤销
+bool FileViewSubWindow::canUndo() const
+{
+    return m_historyIndex >= 0;
+}
+
+// 检查是否可以重做
+bool FileViewSubWindow::canRedo() const
+{
+    return m_historyIndex < m_commandHistory.size() - 1;
+}
+
+// 撤销操作
+void FileViewSubWindow::undo()
+{
+    if (!canUndo()) return;
+
+    m_historyIndex--;
+
+    // 如果没有历史记录，显示原始图片
+    if (m_historyIndex < 0) {
+        m_currentImage = m_originalImage;
+    } else {
+        // 否则，显示上一个命令执行前的图片
+        m_currentImage = m_commandHistory[m_historyIndex]->undo();
+    }
+
+    updateImageDisplay();
+}
+
+// 获取当前图像
+QImage FileViewSubWindow::getCurrentImage() const
+{
+    return m_currentImage;
+}
+
+// 重做操作
+void FileViewSubWindow::redo()
+{
+    if (!canRedo()) return;
+
+    m_historyIndex++;
+
+    // 执行下一个命令
+    m_currentImage = m_commandHistory[m_historyIndex]->execute();
+    updateImageDisplay();
 }
 
 // 对外接口：设置缩放比例（1~500%）

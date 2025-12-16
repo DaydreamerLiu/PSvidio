@@ -11,11 +11,23 @@ CONFIG += c++17
 
 SOURCES += \
     fileviewsubwindow.cpp \
+    grayscalecommand.cpp \
+    binarycommand.cpp \
+    meanfiltercommand.cpp \
+    gammacorrectioncommand.cpp \
+    edgedetectioncommand.cpp \
+    imagecommand.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     fileviewsubwindow.h \
+    grayscalecommand.h \
+    binarycommand.h \
+    meanfiltercommand.h \
+    gammacorrectioncommand.h \
+    edgedetectioncommand.h \
+    imagecommand.h \
     mainwindow.h
 
 FORMS += \

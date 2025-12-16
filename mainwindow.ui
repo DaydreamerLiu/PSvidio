@@ -44,6 +44,10 @@
     <addaction name="action_Y"/>
     <addaction name="separator"/>
     <addaction name="action_G"/>
+    <addaction name="action_T"/>
+    <addaction name="action_2"/>
+    <addaction name="action_3"/>
+    <addaction name="action_4"/>
    </widget>
    <addaction name="menu_F"/>
    <addaction name="menu_E"/>
@@ -129,6 +133,26 @@
   <action name="action_G">
    <property name="text">
     <string>灰度化(&amp;G)</string>
+   </property>
+  </action>
+  <action name="action_T">
+   <property name="text">
+    <string>二值化(&amp;T)</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>滤波</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>伽马变换</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>边缘检测</string>
    </property>
   </action>
  </widget>
