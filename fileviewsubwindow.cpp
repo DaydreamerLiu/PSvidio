@@ -103,6 +103,89 @@ void FileViewSubWindow::updateImageDisplay()
     m_imageLabel->adjustSize();  // 适配图片尺寸
 }
 
+// 应用图像处理命令到当前视频帧
+void FileViewSubWindow::applyImageCommandToVideoFrame(ImageCommand *command)
+{
+    if (!command || !isVideoFile()) return;
+    
+    // 暂停视频播放
+    if (m_mediaPlayer->playbackState() == QMediaPlayer::PlayingState) {
+        m_mediaPlayer->pause();
+    }
+    
+    // 获取当前视频帧
+    QImage currentFrame = getCurrentVideoFrame();
+    if (currentFrame.isNull()) return;
+    
+    // 保存原始图像和命令历史（用于视频模式）
+    if (m_originalImage.isNull()) {
+        m_originalImage = currentFrame;
+        m_currentImage = currentFrame;
+        m_commandHistory.clear();
+        m_historyIndex = -1;
+    }
+    
+    // 清除当前历史记录之后的命令
+    while (m_historyIndex < m_commandHistory.size() - 1) {
+        delete m_commandHistory.takeLast();
+    }
+    
+    // 添加新命令到历史记录（每次调整参数都记录为新命令，不替换相同类型的命令）
+    m_commandHistory.append(command);
+    m_historyIndex++;
+    
+    // 重新执行所有命令以确保状态正确
+    m_currentImage = m_originalImage;
+    for (int i = 0; i <= m_historyIndex; i++) {
+        m_currentImage = m_commandHistory[i]->execute();
+    }
+    
+    // 创建或显示图片标签
+    if (!m_imageLabel) {
+        // 隐藏视频控件
+        if (m_videoWidget) {
+            m_videoWidget->hide();
+        }
+        if (m_btnPlayPause) {
+            m_btnPlayPause->hide();
+        }
+        if (m_sliderVolume) {
+            m_sliderVolume->hide();
+        }
+        if (m_sliderProgress) {
+            m_sliderProgress->hide();
+        }
+        if (m_labelTime) {
+            m_labelTime->hide();
+        }
+        
+        // 创建图片显示标签
+        m_imageLabel = new QLabel(this);
+        m_imageLabel->setAlignment(Qt::AlignCenter);
+        m_imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        
+        // 创建滚动区域
+        QScrollArea *scrollArea = new QScrollArea(this);
+        scrollArea->setWidget(m_imageLabel);
+        scrollArea->setWidgetResizable(true);
+        scrollArea->setFrameShape(QFrame::NoFrame);
+        scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        
+        // 添加到布局
+        QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(m_contentWidget->layout());
+        if (mainLayout) {
+            mainLayout->insertWidget(0, scrollArea);
+        }
+    } else {
+        m_imageLabel->show();
+    }
+    
+    updateImageDisplay();
+    
+    // 发出命令应用信号
+    emit commandApplied(command);
+}
+
 // 应用图像处理命令
 void FileViewSubWindow::applyImageCommand(ImageCommand *command)
 {
@@ -113,12 +196,16 @@ void FileViewSubWindow::applyImageCommand(ImageCommand *command)
         delete m_commandHistory.takeLast();
     }
 
-    // 添加新命令到历史记录
+    // 添加新命令到历史记录（每次调整参数都记录为新命令，不替换相同类型的命令）
     m_commandHistory.append(command);
     m_historyIndex++;
 
-    // 执行命令并更新当前图片
-    m_currentImage = command->execute();
+    // 重新执行所有命令以确保状态正确
+    m_currentImage = m_originalImage;
+    for (int i = 0; i <= m_historyIndex; i++) {
+        m_currentImage = m_commandHistory[i]->execute();
+    }
+    
     updateImageDisplay();
     
     // 发出命令应用信号
@@ -149,18 +236,48 @@ void FileViewSubWindow::undo()
         m_currentImage = m_originalImage;
         emit commandApplied(nullptr); // 没有当前命令
     } else {
-        // 否则，显示上一个命令执行前的图片
-        m_currentImage = m_commandHistory[m_historyIndex]->undo();
-        emit commandApplied(m_historyIndex >= 0 ? m_commandHistory[m_historyIndex] : nullptr);
+        // 重新执行从第一个命令到当前历史索引的所有命令
+        m_currentImage = m_originalImage;
+        for (int i = 0; i <= m_historyIndex; i++) {
+            m_currentImage = m_commandHistory[i]->execute();
+        }
+        emit commandApplied(m_commandHistory[m_historyIndex]);
     }
 
     updateImageDisplay();
 }
 
-// 获取当前图像
+// 检查是否为视频文件
+bool FileViewSubWindow::isVideoFile() const
+{
+    return m_mediaPlayer != nullptr && m_videoWidget != nullptr;
+}
+
+// 获取当前视频帧（仅视频模式）
+QImage FileViewSubWindow::getCurrentVideoFrame() const
+{
+    if (!isVideoFile() || !m_videoWidget) {
+        return QImage();
+    }
+    
+    // 从视频控件中抓取当前帧
+    return m_videoWidget->grab().toImage();
+}
+
+// 获取当前图像（图片或视频帧）
 QImage FileViewSubWindow::getCurrentImage() const
 {
-    return m_currentImage;
+    if (isVideoFile()) {
+        return getCurrentVideoFrame();
+    } else {
+        return m_currentImage;
+    }
+}
+
+// 获取原始图像
+QImage FileViewSubWindow::getOriginalImage() const
+{
+    return m_originalImage;
 }
 
 // 获取当前应用的命令
@@ -179,8 +296,12 @@ void FileViewSubWindow::redo()
 
     m_historyIndex++;
 
-    // 执行下一个命令
-    m_currentImage = m_commandHistory[m_historyIndex]->execute();
+    // 重新执行从第一个命令到当前历史索引的所有命令
+    m_currentImage = m_originalImage;
+    for (int i = 0; i <= m_historyIndex; i++) {
+        m_currentImage = m_commandHistory[i]->execute();
+    }
+    
     updateImageDisplay();
     
     // 发出命令应用信号

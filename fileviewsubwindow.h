@@ -53,8 +53,12 @@ private slots:
     void onPositionChanged(qint64 position); // 播放位置变化
 
 public:
-    // 获取当前图像
+    // 获取当前图像（图片或视频帧）
     QImage getCurrentImage() const;
+    // 获取原始图像
+    QImage getOriginalImage() const;
+    // 获取当前视频帧（仅视频模式）
+    QImage getCurrentVideoFrame() const;
 
     // 图像处理相关方法
     void applyImageCommand(ImageCommand *command);
@@ -63,6 +67,11 @@ public:
     void undo();
     void redo();
     ImageCommand* getCurrentCommand() const;  // 获取当前应用的命令
+    
+    // 检查是否为视频文件
+    bool isVideoFile() const;
+    // 应用图像处理命令到当前视频帧
+    void applyImageCommandToVideoFrame(ImageCommand *command);
 
 private:
     // 加载媒体文件的私有方法

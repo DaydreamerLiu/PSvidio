@@ -9,24 +9,35 @@ GammaCorrectionCommand::GammaCorrectionCommand(const QImage &originalImage, doub
 QImage GammaCorrectionCommand::execute()
 {
     QImage resultImage = m_originalImage.copy();
+    int width = resultImage.width();
+    int height = resultImage.height();
+
+    // 确保图像格式为RGB32以便直接操作像素数据
+    if (resultImage.format() != QImage::Format_RGB32) {
+        resultImage = resultImage.convertToFormat(QImage::Format_RGB32);
+    }
+
+    // 预计算伽马变换表，避免重复计算pow()函数
+    int gammaTable[256];
+    for (int i = 0; i < 256; ++i) {
+        double normalized = i / 255.0;
+        double gammaValue = pow(normalized, m_gamma);
+        gammaTable[i] = qBound(0, qRound(gammaValue * 255), 255);
+    }
 
     // 伽马变换
-    for (int y = 0; y < resultImage.height(); ++y) {
-        for (int x = 0; x < resultImage.width(); ++x) {
-            QColor pixelColor = resultImage.pixelColor(x, y);
+    for (int y = 0; y < height; ++y) {
+        QRgb *line = reinterpret_cast<QRgb*>(resultImage.scanLine(y));
+        for (int x = 0; x < width; ++x) {
+            QRgb pixel = line[x];
 
-            // 对每个颜色通道应用伽马变换
-            int r = qRound(pow(pixelColor.red() / 255.0, m_gamma) * 255);
-            int g = qRound(pow(pixelColor.green() / 255.0, m_gamma) * 255);
-            int b = qRound(pow(pixelColor.blue() / 255.0, m_gamma) * 255);
-
-            // 确保值在0-255范围内
-            r = qBound(0, r, 255);
-            g = qBound(0, g, 255);
-            b = qBound(0, b, 255);
+            // 使用预计算的变换表对每个颜色通道应用伽马变换
+            int r = gammaTable[qRed(pixel)];
+            int g = gammaTable[qGreen(pixel)];
+            int b = gammaTable[qBlue(pixel)];
 
             // 设置变换后的像素
-            resultImage.setPixelColor(x, y, QColor(r, g, b));
+            line[x] = qRgb(r, g, b);
         }
     }
 

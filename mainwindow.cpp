@@ -6,6 +6,7 @@
 #include "meanfiltercommand.h"
 #include "gammacorrectioncommand.h"
 #include "edgedetectioncommand.h"
+#include "mosaiccommand.h"
 #include <QFileDialog>
 #include <QToolBar>
 #include <QLabel>
@@ -160,13 +161,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// 获取当前激活的图片子窗口（过滤视频窗口）
+// 获取当前激活的子窗口（图片或视频）
 FileViewSubWindow* MainWindow::currentImageSubWindow()
 {
     QMdiSubWindow *activeWin = ui->mdiArea->activeSubWindow();
     if (!activeWin) return nullptr;
-    // 转换为自定义子窗口类型
-    return qobject_cast<FileViewSubWindow*>(activeWin->widget()->parentWidget());
+    // 直接转换为自定义子窗口类型，而不是转换widget
+    return qobject_cast<FileViewSubWindow*>(activeWin);
 }
 
 void MainWindow::on_actionNew_new_triggered()
@@ -203,7 +204,6 @@ void MainWindow::on_actionOpen_O_triggered()
         ui->mdiArea->setActiveSubWindow(ui->mdiArea->subWindowList().first());
     }
 }
-
 
 void MainWindow::on_horizontalSliderScale_valueChanged(int value)
 {
@@ -255,8 +255,13 @@ void MainWindow::on_action_G_triggered()
     m_edgeThresholdSlider->setEnabled(false);
     edgeValueLabel->setVisible(false);
 
-    // 创建并应用灰度化命令
-    imageWin->applyImageCommand(new GrayscaleCommand(imageWin->getCurrentImage()));
+    // 根据窗口类型选择命令应用方法
+    GrayscaleCommand *command = new GrayscaleCommand(imageWin->getCurrentImage());
+    if (imageWin->isVideoFile()) {
+        imageWin->applyImageCommandToVideoFrame(command);
+    } else {
+        imageWin->applyImageCommand(command);
+    }
 }
 
 // 二值化
@@ -282,8 +287,13 @@ void MainWindow::on_action_T_triggered()
     // 更新数值显示
     binaryValueLabel->setText(QString::number(m_binaryThreshold));
     
-    // 创建并应用二值化命令
-    imageWin->applyImageCommand(new BinaryCommand(imageWin->getCurrentImage(), m_binaryThreshold));
+    // 根据窗口类型选择命令应用方法
+    BinaryCommand *command = new BinaryCommand(imageWin->getCurrentImage(), m_binaryThreshold);
+    if (imageWin->isVideoFile()) {
+        imageWin->applyImageCommandToVideoFrame(command);
+    } else {
+        imageWin->applyImageCommand(command);
+    }
 }
 
 // 3×3均值滤波
@@ -306,8 +316,13 @@ void MainWindow::on_action_2_triggered()
     m_edgeThresholdSlider->setEnabled(false);
     edgeValueLabel->setVisible(false);
 
-    // 创建并应用均值滤波命令
-    imageWin->applyImageCommand(new MeanFilterCommand(imageWin->getCurrentImage()));
+    // 根据窗口类型选择命令应用方法
+    MeanFilterCommand *command = new MeanFilterCommand(imageWin->getCurrentImage());
+    if (imageWin->isVideoFile()) {
+        imageWin->applyImageCommandToVideoFrame(command);
+    } else {
+        imageWin->applyImageCommand(command);
+    }
 }
 
 // 伽马变换
@@ -333,8 +348,13 @@ void MainWindow::on_action_3_triggered()
     // 更新数值显示
     gammaValueLabel->setText(QString::number(m_gammaValue, 'f', 1));
     
-    // 创建并应用伽马变换命令
-    imageWin->applyImageCommand(new GammaCorrectionCommand(imageWin->getCurrentImage(), m_gammaValue));
+    // 根据窗口类型选择命令应用方法
+    GammaCorrectionCommand *command = new GammaCorrectionCommand(imageWin->getCurrentImage(), m_gammaValue);
+    if (imageWin->isVideoFile()) {
+        imageWin->applyImageCommandToVideoFrame(command);
+    } else {
+        imageWin->applyImageCommand(command);
+    }
 }
 
 // 边缘检测
@@ -360,8 +380,47 @@ void MainWindow::on_action_4_triggered()
     // 更新数值显示
     edgeValueLabel->setText(QString::number(m_edgeThreshold));
     
-    // 创建并应用边缘检测命令
-    imageWin->applyImageCommand(new EdgeDetectionCommand(imageWin->getCurrentImage(), m_edgeThreshold));
+    // 根据窗口类型选择命令应用方法
+    EdgeDetectionCommand *command = new EdgeDetectionCommand(imageWin->getCurrentImage(), m_edgeThreshold);
+    if (imageWin->isVideoFile()) {
+        imageWin->applyImageCommandToVideoFrame(command);
+    } else {
+        imageWin->applyImageCommand(command);
+    }
+}
+
+// 局部马赛克
+void MainWindow::on_action_Mosaic_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin) return;
+
+    // 隐藏所有滑块、标签和数值显示
+    binaryLabel->setVisible(false);
+    m_binaryThresholdSlider->setVisible(false);
+    m_binaryThresholdSlider->setEnabled(false);
+    binaryValueLabel->setVisible(false);
+    gammaLabel->setVisible(false);
+    m_gammaValueSlider->setVisible(false);
+    m_gammaValueSlider->setEnabled(false);
+    gammaValueLabel->setVisible(false);
+    edgeLabel->setVisible(false);
+    m_edgeThresholdSlider->setVisible(false);
+    m_edgeThresholdSlider->setEnabled(false);
+    edgeValueLabel->setVisible(false);
+
+    // 创建并应用局部马赛克命令
+    // 这里使用固定区域和块大小，实际应用中可以让用户选择区域
+    QRect region(50, 50, 200, 200); // 示例区域：(x,y,width,height)
+    int blockSize = 10; // 马赛克块大小
+    MosaicCommand *command = new MosaicCommand(imageWin->getCurrentImage(), region, blockSize);
+    
+    // 根据窗口类型选择命令应用方法
+    if (imageWin->isVideoFile()) {
+        imageWin->applyImageCommandToVideoFrame(command);
+    } else {
+        imageWin->applyImageCommand(command);
+    }
 }
 
 // 撤销
@@ -412,8 +471,13 @@ void MainWindow::on_binaryThresholdSlider_released()
     connect(m_timer, &QTimer::timeout, this, [=]() {
         FileViewSubWindow *imageWin = currentImageSubWindow();
         if (!imageWin) return;
-        // 重新应用二值化命令
-        imageWin->applyImageCommand(new BinaryCommand(imageWin->getCurrentImage(), m_binaryThreshold));
+        // 重新应用二值化命令，使用原始图像而非当前图像
+        BinaryCommand *command = new BinaryCommand(imageWin->getOriginalImage(), m_binaryThreshold);
+        if (imageWin->isVideoFile()) {
+            imageWin->applyImageCommandToVideoFrame(command);
+        } else {
+            imageWin->applyImageCommand(command);
+        }
         // 断开连接，避免重复处理
         disconnect(m_timer, &QTimer::timeout, nullptr, nullptr);
     });
@@ -436,8 +500,13 @@ void MainWindow::on_gammaValueSlider_released()
     connect(m_timer, &QTimer::timeout, this, [=]() {
         FileViewSubWindow *imageWin = currentImageSubWindow();
         if (!imageWin) return;
-        // 重新应用伽马变换命令
-        imageWin->applyImageCommand(new GammaCorrectionCommand(imageWin->getCurrentImage(), m_gammaValue));
+        // 重新应用伽马变换命令，使用原始图像而非当前图像
+        GammaCorrectionCommand *command = new GammaCorrectionCommand(imageWin->getOriginalImage(), m_gammaValue);
+        if (imageWin->isVideoFile()) {
+            imageWin->applyImageCommandToVideoFrame(command);
+        } else {
+            imageWin->applyImageCommand(command);
+        }
         // 断开连接，避免重复处理
         disconnect(m_timer, &QTimer::timeout, nullptr, nullptr);
     });
@@ -460,8 +529,13 @@ void MainWindow::on_edgeThresholdSlider_released()
     connect(m_timer, &QTimer::timeout, this, [=]() {
         FileViewSubWindow *imageWin = currentImageSubWindow();
         if (!imageWin) return;
-        // 重新应用边缘检测命令
-        imageWin->applyImageCommand(new EdgeDetectionCommand(imageWin->getCurrentImage(), m_edgeThreshold));
+        // 重新应用边缘检测命令，使用原始图像而非当前图像
+        EdgeDetectionCommand *command = new EdgeDetectionCommand(imageWin->getOriginalImage(), m_edgeThreshold);
+        if (imageWin->isVideoFile()) {
+            imageWin->applyImageCommandToVideoFrame(command);
+        } else {
+            imageWin->applyImageCommand(command);
+        }
         // 断开连接，避免重复处理
         disconnect(m_timer, &QTimer::timeout, nullptr, nullptr);
     });

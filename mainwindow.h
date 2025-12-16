@@ -33,6 +33,7 @@ private slots:
     void on_action_2_triggered();
     void on_action_3_triggered();
     void on_action_4_triggered();
+    void on_action_Mosaic_triggered();
 
     // 撤销重做相关槽函数
     void on_action_Z_triggered();

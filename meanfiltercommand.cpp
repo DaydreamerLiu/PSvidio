@@ -11,8 +11,17 @@ QImage MeanFilterCommand::execute()
     int width = resultImage.width();
     int height = resultImage.height();
 
+    // 确保图像格式为RGB32以便直接操作像素数据
+    if (resultImage.format() != QImage::Format_RGB32) {
+        resultImage = resultImage.convertToFormat(QImage::Format_RGB32);
+    }
+
+    // 获取原始图像的像素数据（同样转换为RGB32格式）
+    QImage originalRgb = m_originalImage.convertToFormat(QImage::Format_RGB32);
+
     // 3×3均值滤波
     for (int y = 0; y < height; ++y) {
+        QRgb *line = reinterpret_cast<QRgb*>(resultImage.scanLine(y));
         for (int x = 0; x < width; ++x) {
             int sumR = 0, sumG = 0, sumB = 0;
             int count = 0;
@@ -25,10 +34,10 @@ QImage MeanFilterCommand::execute()
 
                     // 检查边界
                     if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                        QColor pixelColor = m_originalImage.pixelColor(nx, ny);
-                        sumR += pixelColor.red();
-                        sumG += pixelColor.green();
-                        sumB += pixelColor.blue();
+                        QRgb pixel = originalRgb.pixel(nx, ny);
+                        sumR += qRed(pixel);
+                        sumG += qGreen(pixel);
+                        sumB += qBlue(pixel);
                         count++;
                     }
                 }
@@ -40,7 +49,7 @@ QImage MeanFilterCommand::execute()
             int avgB = sumB / count;
 
             // 设置滤波后的像素
-            resultImage.setPixelColor(x, y, QColor(avgR, avgG, avgB));
+            line[x] = qRgb(avgR, avgG, avgB);
         }
     }
 

@@ -1,5 +1,6 @@
 #include "edgedetectioncommand.h"
 #include <cmath>
+#include <algorithm>
 
 EdgeDetectionCommand::EdgeDetectionCommand(const QImage &originalImage, int threshold)
     : ImageCommand(originalImage, "边缘检测")
@@ -21,11 +22,18 @@ QImage EdgeDetectionCommand::toGrayscale(const QImage &image)
 {
     QImage grayImage(image.width(), image.height(), QImage::Format_Grayscale8);
 
+    // 转换为RGB32格式以便快速访问像素
+    QImage rgbImage = image.convertToFormat(QImage::Format_RGB32);
+
     for (int y = 0; y < image.height(); ++y) {
+        QRgb *rgbLine = reinterpret_cast<QRgb*>(rgbImage.scanLine(y));
+        uchar *grayLine = grayImage.scanLine(y);
+        
         for (int x = 0; x < image.width(); ++x) {
-            QColor pixelColor = image.pixelColor(x, y);
-            int grayValue = (pixelColor.red() + pixelColor.green() + pixelColor.blue()) / 3;
-            grayImage.setPixel(x, y, grayValue);
+            QRgb pixel = rgbLine[x];
+            // 使用更高效的灰度转换公式，考虑人眼对不同颜色的敏感度
+            int grayValue = qGray(pixel);
+            grayLine[x] = static_cast<uchar>(grayValue);
         }
     }
 
@@ -56,30 +64,31 @@ QImage EdgeDetectionCommand::sobelEdgeDetection(const QImage &image, int thresho
 
     // 应用Sobel算子
     for (int y = 1; y < height - 1; ++y) {
+        // 获取当前行和上下行的指针
+        const uchar *prevLine = grayImage.scanLine(y - 1);
+        const uchar *currLine = grayImage.scanLine(y);
+        const uchar *nextLine = grayImage.scanLine(y + 1);
+        uchar *resultLine = resultImage.scanLine(y);
+        
         for (int x = 1; x < width - 1; ++x) {
             int gradientX = 0;
             int gradientY = 0;
 
             // 计算x和y方向的梯度
-            for (int ky = -1; ky <= 1; ++ky) {
-                for (int kx = -1; kx <= 1; ++kx) {
-                    int nx = x + kx;
-                    int ny = y + ky;
-                    int pixelValue = grayImage.pixel(nx, ny) & 0xFF;
-                    
-                    gradientX += pixelValue * sobelX[ky + 1][kx + 1];
-                    gradientY += pixelValue * sobelY[ky + 1][kx + 1];
-                }
-            }
+            gradientX = -prevLine[x-1] + prevLine[x+1] - 2*currLine[x-1] + 2*currLine[x+1] - nextLine[x-1] + nextLine[x+1];
+            gradientY = -prevLine[x-1] - 2*prevLine[x] - prevLine[x+1] + nextLine[x-1] + 2*nextLine[x] + nextLine[x+1];
 
-            // 计算梯度幅值
-            int gradientMagnitude = qRound(sqrt(gradientX * gradientX + gradientY * gradientY));
+            // 计算梯度幅值（使用近似计算避免sqrt，提高性能）
+            // int gradientMagnitude = qRound(sqrt(gradientX * gradientX + gradientY * gradientY));
+            
+            // 使用更快速的近似计算：|Gx| + |Gy| 或 max(|Gx|, |Gy|)
+            int gradientMagnitude = std::abs(gradientX) + std::abs(gradientY);
             
             // 根据阈值进行二值化处理
             int edgeValue = (gradientMagnitude > threshold) ? 255 : 0;
 
             // 设置边缘检测结果
-            resultImage.setPixel(x, y, edgeValue);
+            resultLine[x] = static_cast<uchar>(edgeValue);
         }
     }
 

@@ -18,7 +18,8 @@ SOURCES += \
     edgedetectioncommand.cpp \
     imagecommand.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    mosaiccommand.cpp
 
 HEADERS += \
     fileviewsubwindow.h \
@@ -28,7 +29,8 @@ HEADERS += \
     gammacorrectioncommand.h \
     edgedetectioncommand.h \
     imagecommand.h \
-    mainwindow.h
+    mainwindow.h \
+    mosaiccommand.h
 
 FORMS += \
     mainwindow.ui
