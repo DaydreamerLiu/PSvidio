@@ -40,6 +40,10 @@
     <property name="title">
      <string>编辑(&amp;E)</string>
     </property>
+    <addaction name="action_Z"/>
+    <addaction name="action_Y"/>
+    <addaction name="separator"/>
+    <addaction name="action_G"/>
    </widget>
    <addaction name="menu_F"/>
    <addaction name="menu_E"/>
@@ -58,6 +62,12 @@
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Orientation::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
        </property>
       </spacer>
      </item>
@@ -104,6 +114,21 @@
   <action name="actionOpen_O">
    <property name="text">
     <string>Open(&amp;O)</string>
+   </property>
+  </action>
+  <action name="action_Z">
+   <property name="text">
+    <string>撤销(&amp;Z)</string>
+   </property>
+  </action>
+  <action name="action_Y">
+   <property name="text">
+    <string>重做(&amp;Y)</string>
+   </property>
+  </action>
+  <action name="action_G">
+   <property name="text">
+    <string>灰度化(&amp;G)</string>
    </property>
   </action>
  </widget>

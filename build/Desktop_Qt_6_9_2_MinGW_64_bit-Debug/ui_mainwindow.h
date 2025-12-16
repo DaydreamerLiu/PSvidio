@@ -32,6 +32,9 @@ class Ui_MainWindow
 public:
     QAction *actionNew_new;
     QAction *actionOpen_O;
+    QAction *action_Z;
+    QAction *action_Y;
+    QAction *action_G;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -55,6 +58,12 @@ public:
         actionNew_new->setObjectName("actionNew_new");
         actionOpen_O = new QAction(MainWindow);
         actionOpen_O->setObjectName("actionOpen_O");
+        action_Z = new QAction(MainWindow);
+        action_Z->setObjectName("action_Z");
+        action_Y = new QAction(MainWindow);
+        action_Y->setObjectName("action_Y");
+        action_G = new QAction(MainWindow);
+        action_G->setObjectName("action_G");
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         gridLayout = new QGridLayout(centralwidget);
@@ -110,6 +119,10 @@ public:
         menubar->addAction(menu_E->menuAction());
         menu_F->addAction(actionNew_new);
         menu_F->addAction(actionOpen_O);
+        menu_E->addAction(action_Z);
+        menu_E->addAction(action_Y);
+        menu_E->addSeparator();
+        menu_E->addAction(action_G);
 
         retranslateUi(MainWindow);
 
@@ -121,6 +134,9 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         actionNew_new->setText(QCoreApplication::translate("MainWindow", "New(&N)", nullptr));
         actionOpen_O->setText(QCoreApplication::translate("MainWindow", "Open(&O)", nullptr));
+        action_Z->setText(QCoreApplication::translate("MainWindow", "\346\222\244\351\224\200(&Z)", nullptr));
+        action_Y->setText(QCoreApplication::translate("MainWindow", "\351\207\215\345\201\232(&Y)", nullptr));
+        action_G->setText(QCoreApplication::translate("MainWindow", "\347\201\260\345\272\246\345\214\226(&G)", nullptr));
         menu_F->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266(&F)", nullptr));
         menu_E->setTitle(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", nullptr));
         dockWidget->setWindowTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\347\256\261", nullptr));

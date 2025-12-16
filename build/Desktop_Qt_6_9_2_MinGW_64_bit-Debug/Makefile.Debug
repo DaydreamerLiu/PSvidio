@@ -342,6 +342,19 @@ debug/moc_fileviewsubwindow.cpp: ../../fileviewsubwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdatetime.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qcalendar.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qtimezone.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QAudioOutput \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudiooutput.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QWheelEvent \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QImage \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QPushButton \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qpushbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSlider \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QHBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QString \
 		debug/moc_predefs.h \
 		E:/Apps/Qt/6.9.2/mingw_64/bin/moc.exe
 	E:\Apps\Qt\6.9.2\mingw_64\bin\moc.exe $(DEFINES) --include E:/z_workspace/qt/PSvidio/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/debug/moc_predefs.h -IE:/Apps/Qt/6.9.2/mingw_64/mkspecs/win32-g++ -IE:/z_workspace/qt/PSvidio -IE:/Apps/Qt/6.9.2/mingw_64/include -IE:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets -IE:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets -IE:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQuick -IE:/Apps/Qt/6.9.2/mingw_64/include/QtOpenGL -IE:/Apps/Qt/6.9.2/mingw_64/include/QtGui -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlMeta -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlModels -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlWorkerScript -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQml -IE:/Apps/Qt/6.9.2/mingw_64/include/QtNetwork -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlIntegration -IE:/Apps/Qt/6.9.2/mingw_64/include/QtCore -I. -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++ -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32 -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed -IE:/Apps/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include ..\..\fileviewsubwindow.h -o debug\moc_fileviewsubwindow.cpp
@@ -546,6 +559,51 @@ debug/moc_mainwindow.cpp: ../../mainwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qlocale.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qguiapplication_platform.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qtabwidget.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMdiSubWindow \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmdisubwindow.h \
+		../../fileviewsubwindow.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QWidget \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QLabel \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlabel.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qframe.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qpicture.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qtextdocument.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QMediaPlayer \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qmediaplayer.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtmultimediaglobal.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtmultimedia-config.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtmultimediaexports.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtaudio.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudio.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/QVideoWidget \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qvideowidget.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qtmultimediawidgetsglobal.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qtmultimediawidgetsexports.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QVBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qboxlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayoutitem.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qgridlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QFileInfo \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfileinfo.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfile.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfiledevice.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdatetime.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qcalendar.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qtimezone.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QAudioOutput \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudiooutput.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QWheelEvent \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QImage \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QPushButton \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qpushbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSlider \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QHBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QString \
 		debug/moc_predefs.h \
 		E:/Apps/Qt/6.9.2/mingw_64/bin/moc.exe
 	E:\Apps\Qt\6.9.2\mingw_64\bin\moc.exe $(DEFINES) --include E:/z_workspace/qt/PSvidio/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/debug/moc_predefs.h -IE:/Apps/Qt/6.9.2/mingw_64/mkspecs/win32-g++ -IE:/z_workspace/qt/PSvidio -IE:/Apps/Qt/6.9.2/mingw_64/include -IE:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets -IE:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets -IE:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQuick -IE:/Apps/Qt/6.9.2/mingw_64/include/QtOpenGL -IE:/Apps/Qt/6.9.2/mingw_64/include/QtGui -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlMeta -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlModels -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlWorkerScript -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQml -IE:/Apps/Qt/6.9.2/mingw_64/include/QtNetwork -IE:/Apps/Qt/6.9.2/mingw_64/include/QtQmlIntegration -IE:/Apps/Qt/6.9.2/mingw_64/include/QtCore -I. -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++ -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32 -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include -IE:/Apps/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed -IE:/Apps/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include ..\..\mainwindow.h -o debug\moc_mainwindow.cpp
@@ -801,10 +859,28 @@ debug/fileviewsubwindow.o: ../../fileviewsubwindow.cpp ../../fileviewsubwindow.h
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdatetime.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qcalendar.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qtimezone.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QAudioOutput \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudiooutput.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QWheelEvent \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QImage \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QPushButton \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qpushbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSlider \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QHBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QString \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QPixmap \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QScrollArea \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qscrollarea.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractscrollarea.h
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSizePolicy \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QDebug \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QResizeEvent \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QStyle \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qstyle.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\fileviewsubwindow.o ..\..\fileviewsubwindow.cpp
 
 debug/main.o: ../../main.cpp ../../mainwindow.h \
@@ -1007,6 +1083,51 @@ debug/main.o: ../../main.cpp ../../mainwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qlocale.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qguiapplication_platform.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qtabwidget.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMdiSubWindow \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmdisubwindow.h \
+		../../fileviewsubwindow.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QWidget \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QLabel \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlabel.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qframe.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qpicture.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qtextdocument.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QMediaPlayer \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qmediaplayer.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtmultimediaglobal.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtmultimedia-config.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtmultimediaexports.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qtaudio.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudio.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/QVideoWidget \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qvideowidget.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qtmultimediawidgetsglobal.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qtmultimediawidgetsexports.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QVBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qboxlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayoutitem.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qgridlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QFileInfo \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfileinfo.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfile.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfiledevice.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdatetime.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qcalendar.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qtimezone.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QAudioOutput \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudiooutput.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QWheelEvent \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QImage \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QPushButton \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qpushbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSlider \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QHBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QString \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QApplication \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\main.o ..\..\main.cpp
@@ -1211,34 +1332,13 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qlocale.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qguiapplication_platform.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qtabwidget.h \
-		ui_mainwindow.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QVariant \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QAction \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QApplication \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qapplication.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QDockWidget \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qdockwidget.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QGridLayout \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qgridlayout.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayout.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayoutitem.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qboxlayout.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMdiArea \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmdiarea.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qframe.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMenu \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmenu.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMenuBar \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmenubar.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QStatusBar \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qstatusbar.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QWidget \
-		../../fileviewsubwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMdiSubWindow \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmdisubwindow.h \
+		../../fileviewsubwindow.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QWidget \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QLabel \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlabel.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qframe.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qpicture.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/qtextdocument.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QMediaPlayer \
@@ -1253,6 +1353,10 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qtmultimediawidgetsglobal.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimediaWidgets/qtmultimediawidgetsexports.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QVBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qboxlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayout.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qlayoutitem.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qgridlayout.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QFileInfo \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfileinfo.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qfile.h \
@@ -1260,6 +1364,37 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdatetime.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qcalendar.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qtimezone.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/QAudioOutput \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtMultimedia/qaudiooutput.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QWheelEvent \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QImage \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QPushButton \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qpushbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSlider \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractslider.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QHBoxLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QString \
+		ui_mainwindow.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/QVariant \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtGui/QAction \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QApplication \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qapplication.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QDockWidget \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qdockwidget.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QGridLayout \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMdiArea \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmdiarea.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMenu \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmenu.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QMenuBar \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qmenubar.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSpacerItem \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QStatusBar \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qstatusbar.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QFileDialog \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qfiledialog.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdir.h \
