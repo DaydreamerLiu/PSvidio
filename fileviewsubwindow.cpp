@@ -120,6 +120,9 @@ void FileViewSubWindow::applyImageCommand(ImageCommand *command)
     // 执行命令并更新当前图片
     m_currentImage = command->execute();
     updateImageDisplay();
+    
+    // 发出命令应用信号
+    emit commandApplied(command);
 }
 
 // 检查是否可以撤销
@@ -144,9 +147,11 @@ void FileViewSubWindow::undo()
     // 如果没有历史记录，显示原始图片
     if (m_historyIndex < 0) {
         m_currentImage = m_originalImage;
+        emit commandApplied(nullptr); // 没有当前命令
     } else {
         // 否则，显示上一个命令执行前的图片
         m_currentImage = m_commandHistory[m_historyIndex]->undo();
+        emit commandApplied(m_historyIndex >= 0 ? m_commandHistory[m_historyIndex] : nullptr);
     }
 
     updateImageDisplay();
@@ -156,6 +161,15 @@ void FileViewSubWindow::undo()
 QImage FileViewSubWindow::getCurrentImage() const
 {
     return m_currentImage;
+}
+
+// 获取当前应用的命令
+ImageCommand* FileViewSubWindow::getCurrentCommand() const
+{
+    if (m_historyIndex >= 0 && m_historyIndex < m_commandHistory.size()) {
+        return m_commandHistory[m_historyIndex];
+    }
+    return nullptr;
 }
 
 // 重做操作
@@ -168,6 +182,9 @@ void FileViewSubWindow::redo()
     // 执行下一个命令
     m_currentImage = m_commandHistory[m_historyIndex]->execute();
     updateImageDisplay();
+    
+    // 发出命令应用信号
+    emit commandApplied(m_commandHistory[m_historyIndex]);
 }
 
 // 对外接口：设置缩放比例（1~500%）

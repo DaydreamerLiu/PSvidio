@@ -58,6 +58,19 @@ MainWindow::MainWindow(QWidget *parent)
     m_timer->setInterval(300); // 设置300ms延迟
     m_timer->setSingleShot(true); // 单次触发
     
+    // 连接信号和槽
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, [=](QMdiSubWindow *subWindow) {
+        if (subWindow) {
+            FileViewSubWindow *imageWin = qobject_cast<FileViewSubWindow*>(subWindow->widget());
+            if (imageWin) {
+                // 连接命令应用信号
+                connect(imageWin, &FileViewSubWindow::commandApplied, this, &MainWindow::onCommandApplied);
+                // 初始化当前命令
+                onCommandApplied(imageWin->getCurrentCommand());
+            }
+        }
+    });
+    
     // 5. 添加工具栏滑块控件
     // 创建一个新的工具栏用于放置滑块控件
     QToolBar *toolBar = addToolBar("ImageToolBar");
@@ -358,6 +371,9 @@ void MainWindow::on_action_Z_triggered()
     if (!imageWin) return;
 
     imageWin->undo();
+    
+    // 更新滑块状态
+    onCommandApplied(imageWin->getCurrentCommand());
 }
 
 // 重做
@@ -367,6 +383,9 @@ void MainWindow::on_action_Y_triggered()
     if (!imageWin) return;
 
     imageWin->redo();
+    
+    // 更新滑块状态
+    onCommandApplied(imageWin->getCurrentCommand());
 }
 
 // 滑块按下时的处理
@@ -446,5 +465,59 @@ void MainWindow::on_edgeThresholdSlider_released()
         // 断开连接，避免重复处理
         disconnect(m_timer, &QTimer::timeout, nullptr, nullptr);
     });
+}
+
+// 处理命令应用信号
+void MainWindow::onCommandApplied(ImageCommand *command)
+{
+    // 默认隐藏所有滑块、标签和数值显示
+    binaryLabel->setVisible(false);
+    m_binaryThresholdSlider->setVisible(false);
+    m_binaryThresholdSlider->setEnabled(false);
+    binaryValueLabel->setVisible(false);
+    gammaLabel->setVisible(false);
+    m_gammaValueSlider->setVisible(false);
+    m_gammaValueSlider->setEnabled(false);
+    gammaValueLabel->setVisible(false);
+    edgeLabel->setVisible(false);
+    m_edgeThresholdSlider->setVisible(false);
+    m_edgeThresholdSlider->setEnabled(false);
+    edgeValueLabel->setVisible(false);
+    
+    // 根据命令类型更新滑块、标签和数值显示
+    if (BinaryCommand *binaryCommand = dynamic_cast<BinaryCommand*>(command)) {
+        // 二值化命令
+        m_binaryThreshold = binaryCommand->threshold();
+        m_binaryThresholdSlider->setValue(m_binaryThreshold);
+        binaryValueLabel->setText(QString::number(m_binaryThreshold));
+        
+        // 显示二值化控件
+        binaryLabel->setVisible(true);
+        m_binaryThresholdSlider->setVisible(true);
+        m_binaryThresholdSlider->setEnabled(true);
+        binaryValueLabel->setVisible(true);
+    } else if (GammaCorrectionCommand *gammaCommand = dynamic_cast<GammaCorrectionCommand*>(command)) {
+        // 伽马变换命令
+        m_gammaValue = gammaCommand->gamma();
+        m_gammaValueSlider->setValue(m_gammaValue * 10);
+        gammaValueLabel->setText(QString::number(m_gammaValue, 'f', 1));
+        
+        // 显示伽马变换控件
+        gammaLabel->setVisible(true);
+        m_gammaValueSlider->setVisible(true);
+        m_gammaValueSlider->setEnabled(true);
+        gammaValueLabel->setVisible(true);
+    } else if (EdgeDetectionCommand *edgeCommand = dynamic_cast<EdgeDetectionCommand*>(command)) {
+        // 边缘检测命令
+        m_edgeThreshold = edgeCommand->threshold();
+        m_edgeThresholdSlider->setValue(m_edgeThreshold);
+        edgeValueLabel->setText(QString::number(m_edgeThreshold));
+        
+        // 显示边缘检测控件
+        edgeLabel->setVisible(true);
+        m_edgeThresholdSlider->setVisible(true);
+        m_edgeThresholdSlider->setEnabled(true);
+        edgeValueLabel->setVisible(true);
+    }
 }
 

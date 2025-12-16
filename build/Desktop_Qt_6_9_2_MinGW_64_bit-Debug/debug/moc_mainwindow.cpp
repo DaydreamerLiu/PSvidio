@@ -61,7 +61,10 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "on_gammaValueSlider_valueChanged",
         "on_gammaValueSlider_released",
         "on_edgeThresholdSlider_valueChanged",
-        "on_edgeThresholdSlider_released"
+        "on_edgeThresholdSlider_released",
+        "onCommandApplied",
+        "ImageCommand*",
+        "command"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -111,6 +114,10 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         }}),
         // Slot 'on_edgeThresholdSlider_released'
         QtMocHelpers::SlotData<void()>(22, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onCommandApplied'
+        QtMocHelpers::SlotData<void(ImageCommand *)>(23, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 24, 25 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -152,6 +159,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 15: _t->on_gammaValueSlider_released(); break;
         case 16: _t->on_edgeThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 17: _t->on_edgeThresholdSlider_released(); break;
+        case 18: _t->onCommandApplied((*reinterpret_cast< std::add_pointer_t<ImageCommand*>>(_a[1]))); break;
         default: ;
         }
     }
@@ -188,14 +196,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 18)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 18;
+        _id -= 19;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 18)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 18;
+        _id -= 19;
     }
     return _id;
 }

@@ -43,6 +43,9 @@ template <> constexpr inline auto FileViewSubWindow::qt_create_metaobjectdata<qt
         "scaleChanged",
         "",
         "percent",
+        "commandApplied",
+        "ImageCommand*",
+        "command",
         "onPlayPauseClicked",
         "onVolumeSliderChanged",
         "value",
@@ -62,29 +65,33 @@ template <> constexpr inline auto FileViewSubWindow::qt_create_metaobjectdata<qt
         QtMocHelpers::SignalData<void(int)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 3 },
         }}),
+        // Signal 'commandApplied'
+        QtMocHelpers::SignalData<void(ImageCommand *)>(4, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 5, 6 },
+        }}),
         // Slot 'onPlayPauseClicked'
-        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onVolumeSliderChanged'
-        QtMocHelpers::SlotData<void(int)>(5, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 6 },
+        QtMocHelpers::SlotData<void(int)>(8, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 9 },
         }}),
         // Slot 'onProgressSliderChanged'
-        QtMocHelpers::SlotData<void(int)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 6 },
+        QtMocHelpers::SlotData<void(int)>(10, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 9 },
         }}),
         // Slot 'onProgressSliderReleased'
-        QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onPlayerStateChanged'
-        QtMocHelpers::SlotData<void(QMediaPlayer::PlaybackState)>(9, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 10, 11 },
+        QtMocHelpers::SlotData<void(QMediaPlayer::PlaybackState)>(12, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 13, 14 },
         }}),
         // Slot 'onDurationChanged'
-        QtMocHelpers::SlotData<void(qint64)>(12, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::LongLong, 13 },
+        QtMocHelpers::SlotData<void(qint64)>(15, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::LongLong, 16 },
         }}),
         // Slot 'onPositionChanged'
-        QtMocHelpers::SlotData<void(qint64)>(14, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::LongLong, 15 },
+        QtMocHelpers::SlotData<void(qint64)>(17, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::LongLong, 18 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -110,18 +117,21 @@ void FileViewSubWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->scaleChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 1: _t->onPlayPauseClicked(); break;
-        case 2: _t->onVolumeSliderChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 3: _t->onProgressSliderChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 4: _t->onProgressSliderReleased(); break;
-        case 5: _t->onPlayerStateChanged((*reinterpret_cast< std::add_pointer_t<QMediaPlayer::PlaybackState>>(_a[1]))); break;
-        case 6: _t->onDurationChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
-        case 7: _t->onPositionChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
+        case 1: _t->commandApplied((*reinterpret_cast< std::add_pointer_t<ImageCommand*>>(_a[1]))); break;
+        case 2: _t->onPlayPauseClicked(); break;
+        case 3: _t->onVolumeSliderChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 4: _t->onProgressSliderChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 5: _t->onProgressSliderReleased(); break;
+        case 6: _t->onPlayerStateChanged((*reinterpret_cast< std::add_pointer_t<QMediaPlayer::PlaybackState>>(_a[1]))); break;
+        case 7: _t->onDurationChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
+        case 8: _t->onPositionChanged((*reinterpret_cast< std::add_pointer_t<qint64>>(_a[1]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
         if (QtMocHelpers::indexOfMethod<void (FileViewSubWindow::*)(int )>(_a, &FileViewSubWindow::scaleChanged, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (FileViewSubWindow::*)(ImageCommand * )>(_a, &FileViewSubWindow::commandApplied, 1))
             return;
     }
 }
@@ -145,14 +155,14 @@ int FileViewSubWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 9;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 9)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 8;
+        _id -= 9;
     }
     return _id;
 }
@@ -161,5 +171,11 @@ int FileViewSubWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void FileViewSubWindow::scaleChanged(int _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
+}
+
+// SIGNAL 1
+void FileViewSubWindow::commandApplied(ImageCommand * _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 1, nullptr, _t1);
 }
 QT_WARNING_POP

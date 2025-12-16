@@ -39,6 +39,7 @@ protected:
 
 signals:
     void scaleChanged(int percent);  // 缩放比例变化时触发，携带当前比例
+    void commandApplied(ImageCommand *command);  // 命令应用或撤销/重做时触发
 
 
 private slots:
@@ -61,6 +62,7 @@ public:
     bool canRedo() const;
     void undo();
     void redo();
+    ImageCommand* getCurrentCommand() const;  // 获取当前应用的命令
 
 private:
     // 加载媒体文件的私有方法

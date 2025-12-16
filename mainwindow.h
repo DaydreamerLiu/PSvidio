@@ -46,6 +46,7 @@ private slots:
     void on_gammaValueSlider_released();
     void on_edgeThresholdSlider_valueChanged(int value);
     void on_edgeThresholdSlider_released();
+    void onCommandApplied(ImageCommand *command); // 处理命令应用信号
 
 private:
     Ui::MainWindow *ui;
