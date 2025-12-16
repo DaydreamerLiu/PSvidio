@@ -2143,11 +2143,18 @@ release/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QSpacerItem \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QStatusBar \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qstatusbar.h \
+		../../grayscalecommand.h \
+		../../binarycommand.h \
+		../../meanfiltercommand.h \
+		../../gammacorrectioncommand.h \
+		../../edgedetectioncommand.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QFileDialog \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qfiledialog.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdir.h \
 		E:/Apps/Qt/6.9.2/mingw_64/include/QtCore/qdirlisting.h \
-		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qdialog.h
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qdialog.h \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/QToolBar \
+		E:/Apps/Qt/6.9.2/mingw_64/include/QtWidgets/qtoolbar.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\mainwindow.o ..\..\mainwindow.cpp
 
 release/moc_fileviewsubwindow.o: release/moc_fileviewsubwindow.cpp 

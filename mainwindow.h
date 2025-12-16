@@ -38,10 +38,14 @@ private slots:
     void on_action_Z_triggered();
     void on_action_Y_triggered();
 
-    // 滑块控件相关槽函数
+    // 槽函数
+    void on_sliderPressed();
     void on_binaryThresholdSlider_valueChanged(int value);
+    void on_binaryThresholdSlider_released();
     void on_gammaValueSlider_valueChanged(int value);
+    void on_gammaValueSlider_released();
     void on_edgeThresholdSlider_valueChanged(int value);
+    void on_edgeThresholdSlider_released();
 
 private:
     Ui::MainWindow *ui;
@@ -52,9 +56,19 @@ private:
     QSlider *m_binaryThresholdSlider;
     QSlider *m_gammaValueSlider;
     QSlider *m_edgeThresholdSlider;
+    // 滑块标签控件
+    QLabel *binaryLabel; // 二值化阈值标签
+    QLabel *gammaLabel; // 伽马值标签
+    QLabel *edgeLabel; // 边缘检测阈值标签
+    // 滑块数值显示标签
+    QLabel *binaryValueLabel; // 二值化阈值数值显示
+    QLabel *gammaValueLabel; // 伽马值数值显示
+    QLabel *edgeValueLabel; // 边缘检测阈值数值显示
     // 滑块当前值
     int m_binaryThreshold;
     double m_gammaValue;
     int m_edgeThreshold;
+    // 用于延迟处理的定时器
+    QTimer *m_timer; // 用于滑块停止拖动后延迟处理
 };
 #endif // MAINWINDOW_H
