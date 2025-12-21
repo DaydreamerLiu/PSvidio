@@ -39,6 +39,7 @@ public:
     QAction *action_2;
     QAction *action_3;
     QAction *action_4;
+    QAction *actionSaveVideo;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QMdiArea *mdiArea;
@@ -76,6 +77,8 @@ public:
         action_3->setObjectName("action_3");
         action_4 = new QAction(MainWindow);
         action_4->setObjectName("action_4");
+        actionSaveVideo = new QAction(MainWindow);
+        actionSaveVideo->setObjectName("actionSaveVideo");
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         gridLayout = new QGridLayout(centralwidget);
@@ -157,6 +160,7 @@ public:
         action_2->setText(QCoreApplication::translate("MainWindow", "\346\273\244\346\263\242", nullptr));
         action_3->setText(QCoreApplication::translate("MainWindow", "\344\274\275\351\251\254\345\217\230\346\215\242", nullptr));
         action_4->setText(QCoreApplication::translate("MainWindow", "\350\276\271\347\274\230\346\243\200\346\265\213", nullptr));
+        actionSaveVideo->setText(QCoreApplication::translate("MainWindow", "\344\277\235\345\255\230\350\247\206\351\242\221", nullptr));
         menu_F->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266(&F)", nullptr));
         menu_E->setTitle(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", nullptr));
         dockWidget->setWindowTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\347\256\261", nullptr));

@@ -7,7 +7,7 @@ MosaicCommand::MosaicCommand(const QImage &originalImage, const QRect &region, i
 
 QImage MosaicCommand::execute()
 {
-    QImage resultImage = m_originalImage.copy();
+    QImage resultImage = m_inputImage.copy();
     
     // 确保马赛克区域在图像范围内
     QRect validRegion = m_region.intersected(QRect(0, 0, resultImage.width(), resultImage.height()));

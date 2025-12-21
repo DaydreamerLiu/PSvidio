@@ -8,7 +8,7 @@ GammaCorrectionCommand::GammaCorrectionCommand(const QImage &originalImage, doub
 
 QImage GammaCorrectionCommand::execute()
 {
-    QImage resultImage = m_originalImage.copy();
+    QImage resultImage = m_inputImage.copy();
     int width = resultImage.width();
     int height = resultImage.height();
 

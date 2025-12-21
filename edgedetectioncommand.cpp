@@ -10,7 +10,7 @@ EdgeDetectionCommand::EdgeDetectionCommand(const QImage &originalImage, int thre
 
 QImage EdgeDetectionCommand::execute()
 {
-    return sobelEdgeDetection(m_originalImage, m_threshold);
+    return sobelEdgeDetection(m_inputImage, m_threshold);
 }
 
 int EdgeDetectionCommand::threshold() const

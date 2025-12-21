@@ -7,7 +7,7 @@ GrayscaleCommand::GrayscaleCommand(const QImage &originalImage)
 
 QImage GrayscaleCommand::execute()
 {
-    QImage resultImage = m_originalImage.copy();
+    QImage resultImage = m_inputImage.copy();
 
     // 遍历每个像素
     for (int y = 0; y < resultImage.height(); ++y) {

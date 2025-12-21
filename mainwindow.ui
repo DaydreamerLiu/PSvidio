@@ -155,6 +155,11 @@
     <string>边缘检测</string>
    </property>
   </action>
+  <action name="actionSaveVideo">
+   <property name="text">
+    <string>保存视频</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

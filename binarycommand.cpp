@@ -7,7 +7,7 @@ BinaryCommand::BinaryCommand(const QImage &originalImage, int threshold)
 
 QImage BinaryCommand::execute()
 {
-    QImage resultImage = m_originalImage.copy();
+    QImage resultImage = m_inputImage.copy();
     int width = resultImage.width();
     int height = resultImage.height();
 

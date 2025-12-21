@@ -7,7 +7,7 @@ MeanFilterCommand::MeanFilterCommand(const QImage &originalImage)
 
 QImage MeanFilterCommand::execute()
 {
-    QImage resultImage = m_originalImage.copy();
+    QImage resultImage = m_inputImage.copy();
     int width = resultImage.width();
     int height = resultImage.height();
 
@@ -17,7 +17,7 @@ QImage MeanFilterCommand::execute()
     }
 
     // 获取原始图像的像素数据（同样转换为RGB32格式）
-    QImage originalRgb = m_originalImage.convertToFormat(QImage::Format_RGB32);
+    QImage originalRgb = m_inputImage.convertToFormat(QImage::Format_RGB32);
 
     // 3×3均值滤波
     for (int y = 0; y < height; ++y) {

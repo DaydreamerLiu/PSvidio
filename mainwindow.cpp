@@ -205,6 +205,37 @@ void MainWindow::on_actionOpen_O_triggered()
     }
 }
 
+// 保存处理后的视频
+void MainWindow::on_actionSaveVideo_triggered()
+{
+    FileViewSubWindow *imageWin = currentImageSubWindow();
+    if (!imageWin || !imageWin->isVideoFile()) {
+        return;
+    }
+    
+    // 打开文件对话框让用户选择保存位置
+    QString dirPath = QFileDialog::getExistingDirectory(
+        this,
+        tr("选择保存目录"),
+        QDir::homePath(),
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+    );
+    
+    if (dirPath.isEmpty()) {
+        return;
+    }
+    
+    // 保存处理后的视频
+    bool success = imageWin->saveProcessedVideo(dirPath);
+    
+    // 显示保存结果
+    if (success) {
+        qDebug() << "视频保存成功：" << dirPath;
+    } else {
+        qDebug() << "视频保存失败";
+    }
+}
+
 void MainWindow::on_horizontalSliderScale_valueChanged(int value)
 {
     FileViewSubWindow *imageWin = currentImageSubWindow();
@@ -258,7 +289,7 @@ void MainWindow::on_action_G_triggered()
     // 根据窗口类型选择命令应用方法
     GrayscaleCommand *command = new GrayscaleCommand(imageWin->getCurrentImage());
     if (imageWin->isVideoFile()) {
-        imageWin->applyImageCommandToVideoFrame(command);
+        imageWin->applyImageCommandToVideo(command);
     } else {
         imageWin->applyImageCommand(command);
     }
@@ -290,7 +321,7 @@ void MainWindow::on_action_T_triggered()
     // 根据窗口类型选择命令应用方法
     BinaryCommand *command = new BinaryCommand(imageWin->getCurrentImage(), m_binaryThreshold);
     if (imageWin->isVideoFile()) {
-        imageWin->applyImageCommandToVideoFrame(command);
+        imageWin->applyImageCommandToVideo(command);
     } else {
         imageWin->applyImageCommand(command);
     }
@@ -319,7 +350,7 @@ void MainWindow::on_action_2_triggered()
     // 根据窗口类型选择命令应用方法
     MeanFilterCommand *command = new MeanFilterCommand(imageWin->getCurrentImage());
     if (imageWin->isVideoFile()) {
-        imageWin->applyImageCommandToVideoFrame(command);
+        imageWin->applyImageCommandToVideo(command);
     } else {
         imageWin->applyImageCommand(command);
     }
@@ -351,7 +382,7 @@ void MainWindow::on_action_3_triggered()
     // 根据窗口类型选择命令应用方法
     GammaCorrectionCommand *command = new GammaCorrectionCommand(imageWin->getCurrentImage(), m_gammaValue);
     if (imageWin->isVideoFile()) {
-        imageWin->applyImageCommandToVideoFrame(command);
+        imageWin->applyImageCommandToVideo(command);
     } else {
         imageWin->applyImageCommand(command);
     }
@@ -383,7 +414,7 @@ void MainWindow::on_action_4_triggered()
     // 根据窗口类型选择命令应用方法
     EdgeDetectionCommand *command = new EdgeDetectionCommand(imageWin->getCurrentImage(), m_edgeThreshold);
     if (imageWin->isVideoFile()) {
-        imageWin->applyImageCommandToVideoFrame(command);
+        imageWin->applyImageCommandToVideo(command);
     } else {
         imageWin->applyImageCommand(command);
     }
@@ -417,7 +448,7 @@ void MainWindow::on_action_Mosaic_triggered()
     
     // 根据窗口类型选择命令应用方法
     if (imageWin->isVideoFile()) {
-        imageWin->applyImageCommandToVideoFrame(command);
+        imageWin->applyImageCommandToVideo(command);
     } else {
         imageWin->applyImageCommand(command);
     }
@@ -474,7 +505,7 @@ void MainWindow::on_binaryThresholdSlider_released()
         // 重新应用二值化命令，使用原始图像而非当前图像
         BinaryCommand *command = new BinaryCommand(imageWin->getOriginalImage(), m_binaryThreshold);
         if (imageWin->isVideoFile()) {
-            imageWin->applyImageCommandToVideoFrame(command);
+            imageWin->applyImageCommandToVideo(command);
         } else {
             imageWin->applyImageCommand(command);
         }
@@ -503,7 +534,7 @@ void MainWindow::on_gammaValueSlider_released()
         // 重新应用伽马变换命令，使用原始图像而非当前图像
         GammaCorrectionCommand *command = new GammaCorrectionCommand(imageWin->getOriginalImage(), m_gammaValue);
         if (imageWin->isVideoFile()) {
-            imageWin->applyImageCommandToVideoFrame(command);
+            imageWin->applyImageCommandToVideo(command);
         } else {
             imageWin->applyImageCommand(command);
         }
@@ -532,7 +563,7 @@ void MainWindow::on_edgeThresholdSlider_released()
         // 重新应用边缘检测命令，使用原始图像而非当前图像
         EdgeDetectionCommand *command = new EdgeDetectionCommand(imageWin->getOriginalImage(), m_edgeThreshold);
         if (imageWin->isVideoFile()) {
-            imageWin->applyImageCommandToVideoFrame(command);
+            imageWin->applyImageCommandToVideo(command);
         } else {
             imageWin->applyImageCommand(command);
         }

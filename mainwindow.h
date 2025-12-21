@@ -22,6 +22,7 @@ private slots:
     void on_actionNew_new_triggered();
 
     void on_actionOpen_O_triggered();
+    void on_actionSaveVideo_triggered();
 
     void on_horizontalSliderScale_valueChanged(int value);
 

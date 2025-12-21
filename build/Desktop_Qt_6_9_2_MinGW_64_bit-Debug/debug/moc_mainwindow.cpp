@@ -43,6 +43,7 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         "on_actionNew_new_triggered",
         "",
         "on_actionOpen_O_triggered",
+        "on_actionSaveVideo_triggered",
         "on_horizontalSliderScale_valueChanged",
         "value",
         "on_mdiArea_subWindowActivated",
@@ -73,53 +74,55 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
         QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_actionOpen_O_triggered'
         QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_actionSaveVideo_triggered'
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_horizontalSliderScale_valueChanged'
-        QtMocHelpers::SlotData<void(int)>(4, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 5 },
+        QtMocHelpers::SlotData<void(int)>(5, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 6 },
         }}),
         // Slot 'on_mdiArea_subWindowActivated'
-        QtMocHelpers::SlotData<void(QMdiSubWindow *)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 7, 8 },
+        QtMocHelpers::SlotData<void(QMdiSubWindow *)>(7, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 8, 9 },
         }}),
         // Slot 'on_action_G_triggered'
-        QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_T_triggered'
         QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_2_triggered'
+        // Slot 'on_action_T_triggered'
         QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_3_triggered'
+        // Slot 'on_action_2_triggered'
         QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_4_triggered'
+        // Slot 'on_action_3_triggered'
         QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_Mosaic_triggered'
+        // Slot 'on_action_4_triggered'
         QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_Z_triggered'
+        // Slot 'on_action_Mosaic_triggered'
         QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_action_Y_triggered'
+        // Slot 'on_action_Z_triggered'
         QtMocHelpers::SlotData<void()>(16, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'on_sliderPressed'
+        // Slot 'on_action_Y_triggered'
         QtMocHelpers::SlotData<void()>(17, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'on_sliderPressed'
+        QtMocHelpers::SlotData<void()>(18, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_binaryThresholdSlider_valueChanged'
-        QtMocHelpers::SlotData<void(int)>(18, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 5 },
+        QtMocHelpers::SlotData<void(int)>(19, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 6 },
         }}),
         // Slot 'on_binaryThresholdSlider_released'
-        QtMocHelpers::SlotData<void()>(19, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(20, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_gammaValueSlider_valueChanged'
-        QtMocHelpers::SlotData<void(int)>(20, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 5 },
+        QtMocHelpers::SlotData<void(int)>(21, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 6 },
         }}),
         // Slot 'on_gammaValueSlider_released'
-        QtMocHelpers::SlotData<void()>(21, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(22, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'on_edgeThresholdSlider_valueChanged'
-        QtMocHelpers::SlotData<void(int)>(22, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 5 },
+        QtMocHelpers::SlotData<void(int)>(23, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 6 },
         }}),
         // Slot 'on_edgeThresholdSlider_released'
-        QtMocHelpers::SlotData<void()>(23, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(24, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onCommandApplied'
-        QtMocHelpers::SlotData<void(ImageCommand *)>(24, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 25, 26 },
+        QtMocHelpers::SlotData<void(ImageCommand *)>(25, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 26, 27 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -146,31 +149,32 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->on_actionNew_new_triggered(); break;
         case 1: _t->on_actionOpen_O_triggered(); break;
-        case 2: _t->on_horizontalSliderScale_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 3: _t->on_mdiArea_subWindowActivated((*reinterpret_cast< std::add_pointer_t<QMdiSubWindow*>>(_a[1]))); break;
-        case 4: _t->on_action_G_triggered(); break;
-        case 5: _t->on_action_T_triggered(); break;
-        case 6: _t->on_action_2_triggered(); break;
-        case 7: _t->on_action_3_triggered(); break;
-        case 8: _t->on_action_4_triggered(); break;
-        case 9: _t->on_action_Mosaic_triggered(); break;
-        case 10: _t->on_action_Z_triggered(); break;
-        case 11: _t->on_action_Y_triggered(); break;
-        case 12: _t->on_sliderPressed(); break;
-        case 13: _t->on_binaryThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 14: _t->on_binaryThresholdSlider_released(); break;
-        case 15: _t->on_gammaValueSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 16: _t->on_gammaValueSlider_released(); break;
-        case 17: _t->on_edgeThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 18: _t->on_edgeThresholdSlider_released(); break;
-        case 19: _t->onCommandApplied((*reinterpret_cast< std::add_pointer_t<ImageCommand*>>(_a[1]))); break;
+        case 2: _t->on_actionSaveVideo_triggered(); break;
+        case 3: _t->on_horizontalSliderScale_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 4: _t->on_mdiArea_subWindowActivated((*reinterpret_cast< std::add_pointer_t<QMdiSubWindow*>>(_a[1]))); break;
+        case 5: _t->on_action_G_triggered(); break;
+        case 6: _t->on_action_T_triggered(); break;
+        case 7: _t->on_action_2_triggered(); break;
+        case 8: _t->on_action_3_triggered(); break;
+        case 9: _t->on_action_4_triggered(); break;
+        case 10: _t->on_action_Mosaic_triggered(); break;
+        case 11: _t->on_action_Z_triggered(); break;
+        case 12: _t->on_action_Y_triggered(); break;
+        case 13: _t->on_sliderPressed(); break;
+        case 14: _t->on_binaryThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 15: _t->on_binaryThresholdSlider_released(); break;
+        case 16: _t->on_gammaValueSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 17: _t->on_gammaValueSlider_released(); break;
+        case 18: _t->on_edgeThresholdSlider_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 19: _t->on_edgeThresholdSlider_released(); break;
+        case 20: _t->onCommandApplied((*reinterpret_cast< std::add_pointer_t<ImageCommand*>>(_a[1]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-        case 3:
+        case 4:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
@@ -200,14 +204,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 20)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 20;
+        _id -= 21;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 20)
+        if (_id < 21)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 20;
+        _id -= 21;
     }
     return _id;
 }
