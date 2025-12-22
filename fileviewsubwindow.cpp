@@ -19,6 +19,7 @@
 // Qt6.9.2 构造函数
 FileViewSubWindow::FileViewSubWindow(const QString &filePath, QWidget *parent)
     : QMdiSubWindow(parent)
+    , m_filePath(filePath)
 {
     // 初始化内容容器
     m_contentWidget = new QWidget(this);
@@ -471,6 +472,12 @@ void FileViewSubWindow::setScaleFactor(int percent)
 int FileViewSubWindow::currentScalePercent() const
 {
     return m_scalePercent;
+}
+
+// 获取文件路径
+QString FileViewSubWindow::getFilePath() const
+{
+    return m_filePath;
 }
 
 // 重写滚轮事件：鼠标滚轮缩放（向上=放大，向下=缩小）

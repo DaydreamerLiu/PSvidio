@@ -79,6 +79,9 @@ public:
     void applyImageCommandToVideo(ImageCommand *command);
     // 保存处理后的视频
     bool saveProcessedVideo(const QString &filePath);
+    
+    // 获取文件路径
+    QString getFilePath() const;
 
 private:
     // 加载媒体文件的私有方法
@@ -97,6 +100,9 @@ private:
     // 命令历史记录
     QList<ImageCommand*> m_commandHistory;
     int m_historyIndex = -1;     // 当前历史记录索引
+    
+    // 文件路径存储
+    QString m_filePath;          // 存储文件路径
 
     // 成员变量：使用前向声明+初始化，遵循Qt6内存管理（父子机制）
     QWidget *m_contentWidget = nullptr;

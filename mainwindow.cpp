@@ -50,8 +50,22 @@ MainWindow::MainWindow(QWidget *parent)
                 }
             }
         });
+        
+        // 添加标签页切换时的文件信息更新
+        connect(mdiTabBar, &QTabWidget::currentChanged, this, [=](int index) {
+            if (index >= 0 && index < ui->mdiArea->subWindowList().size()) {
+                QMdiSubWindow *subWin = ui->mdiArea->subWindowList().at(index);
+                if (subWin) {
+                    FileViewSubWindow *imageWin = qobject_cast<FileViewSubWindow*>(subWin);
+                    if (imageWin) {
+                        updateFileInfo(imageWin);
+                    }
+                }
+            } else {
+                updateFileInfo(nullptr);
+            }
+        });
     }
-
 
     // 4. MDI窗口行为优化
     ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -67,10 +81,10 @@ MainWindow::MainWindow(QWidget *parent)
     // 连接信号和槽
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, [=](QMdiSubWindow *subWindow) {
         if (subWindow) {
-            FileViewSubWindow *imageWin = qobject_cast<FileViewSubWindow*>(subWindow->widget());
+            FileViewSubWindow *imageWin = qobject_cast<FileViewSubWindow*>(subWindow);
             if (imageWin) {
                 // 连接命令应用信号
-                connect(imageWin, &FileViewSubWindow::commandApplied, this, &MainWindow::onCommandApplied);
+                connect(imageWin, &FileViewSubWindow::commandApplied, this, &MainWindow::onCommandApplied, Qt::UniqueConnection);
                 // 初始化当前命令
                 onCommandApplied(imageWin->getCurrentCommand());
                 // 更新文件信息
@@ -139,7 +153,7 @@ void MainWindow::on_actionOpen_O_triggered()
     if (!ui->mdiArea->subWindowList().isEmpty()) {
         ui->mdiArea->setActiveSubWindow(ui->mdiArea->subWindowList().first());
         // 更新文件信息
-        FileViewSubWindow *firstWin = qobject_cast<FileViewSubWindow*>(ui->mdiArea->subWindowList().first()->widget());
+        FileViewSubWindow *firstWin = qobject_cast<FileViewSubWindow*>(ui->mdiArea->subWindowList().first());
         if (firstWin) {
             updateFileInfo(firstWin);
         }
@@ -818,62 +832,130 @@ void MainWindow::updateFileInfo(FileViewSubWindow *subWindow)
         return;
     }
     
-    // 获取文件路径
-    QString filePath = subWindow->windowTitle(); // 假设窗口标题包含文件路径
-    if (filePath.isEmpty()) {
-        return;
+    // 使用新的getFilePath方法获取文件路径
+    QString filePath = subWindow->getFilePath();
+    QString fileName = subWindow->windowTitle(); // 使用窗口标题作为显示文件名
+    
+    if (fileName.isEmpty()) {
+        fileName = "未命名文件";
     }
     
-    QFileInfo fileInfo(filePath);
-    
-    // 文件名
-    QString fileName = fileInfo.fileName();
-    if (fileName.length() > 30) {
-        fileName = fileName.left(27) + "...";
+    // 文件名显示（限制长度）
+    QString displayName = fileName;
+    if (displayName.length() > 30) {
+        displayName = displayName.left(27) + "...";
     }
-    ui->fileNameLabel->setText("文件名：" + fileName);
+    ui->fileNameLabel->setText("文件名：" + displayName);
     
-    // 文件大小
-    qint64 fileSize = fileInfo.size();
-    QString sizeStr;
-    if (fileSize < 1024) {
-        sizeStr = QString("%1 B").arg(fileSize);
-    } else if (fileSize < 1024 * 1024) {
-        sizeStr = QString("%1 KB").arg(fileSize / 1024.0, 0, 'f', 1);
-    } else if (fileSize < 1024 * 1024 * 1024) {
-        sizeStr = QString("%1 MB").arg(fileSize / (1024.0 * 1024.0), 0, 'f', 1);
+    // 文件大小和类型信息
+    if (subWindow->isVideoFile()) {
+        // 视频文件处理
+        if (!filePath.isEmpty()) {
+            QFileInfo fileInfo(filePath);
+            qint64 fileSize = fileInfo.size();
+            QString sizeStr;
+            if (fileSize < 1024) {
+                sizeStr = QString("%1 B").arg(fileSize);
+            } else if (fileSize < 1024 * 1024) {
+                sizeStr = QString("%1 KB").arg(fileSize / 1024.0, 0, 'f', 1);
+            } else if (fileSize < 1024 * 1024 * 1024) {
+                sizeStr = QString("%1 MB").arg(fileSize / (1024.0 * 1024.0), 0, 'f', 1);
+            } else {
+                sizeStr = QString("%1 GB").arg(fileSize / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+            }
+            ui->fileSizeLabel->setText("文件大小：" + sizeStr);
+            
+            // 文件类型
+            QString suffix = fileInfo.suffix().toUpper();
+            ui->fileTypeLabel->setText("文件类型：" + suffix + " 视频");
+        } else {
+            ui->fileSizeLabel->setText("文件大小：视频文件");
+            ui->fileTypeLabel->setText("文件类型：视频");
+        }
+        
+        // 视频分辨率
+        QImage currentImage = subWindow->getCurrentImage();
+        if (!currentImage.isNull()) {
+            QString resolution = QString("%1 × %2").arg(currentImage.width()).arg(currentImage.height());
+            ui->resolutionLabel->setText("分辨率：" + resolution);
+        } else {
+            ui->resolutionLabel->setText("分辨率：--");
+        }
     } else {
-        sizeStr = QString("%1 GB").arg(fileSize / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
-    }
-    ui->fileSizeLabel->setText("文件大小：" + sizeStr);
-    
-    // 文件类型
-    QString suffix = fileInfo.suffix().toUpper();
-    QString typeStr;
-    if (suffix == "JPG" || suffix == "JPEG") {
-        typeStr = "JPEG 图像";
-    } else if (suffix == "PNG") {
-        typeStr = "PNG 图像";
-    } else if (suffix == "BMP") {
-        typeStr = "BMP 图像";
-    } else if (suffix == "MP4") {
-        typeStr = "MP4 视频";
-    } else if (suffix == "AVI") {
-        typeStr = "AVI 视频";
-    } else if (suffix == "MOV") {
-        typeStr = "MOV 视频";
-    } else {
-        typeStr = suffix + " 文件";
-    }
-    ui->fileTypeLabel->setText("文件类型：" + typeStr);
-    
-    // 分辨率
-    QImage currentImage = subWindow->getCurrentImage();
-    if (!currentImage.isNull()) {
-        QString resolution = QString("%1 × %2").arg(currentImage.width()).arg(currentImage.height());
-        ui->resolutionLabel->setText("分辨率：" + resolution);
-    } else {
-        ui->resolutionLabel->setText("分辨率：--");
+        // 图像文件处理
+        if (!filePath.isEmpty()) {
+            QFileInfo fileInfo(filePath);
+            qint64 fileSize = fileInfo.size();
+            QString sizeStr;
+            if (fileSize < 1024) {
+                sizeStr = QString("%1 B").arg(fileSize);
+            } else if (fileSize < 1024 * 1024) {
+                sizeStr = QString("%1 KB").arg(fileSize / 1024.0, 0, 'f', 1);
+            } else if (fileSize < 1024 * 1024 * 1024) {
+                sizeStr = QString("%1 MB").arg(fileSize / (1024.0 * 1024.0), 0, 'f', 1);
+            } else {
+                sizeStr = QString("%1 GB").arg(fileSize / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+            }
+            ui->fileSizeLabel->setText("文件大小：" + sizeStr);
+            
+            // 文件类型
+            QString suffix = fileInfo.suffix().toUpper();
+            QString typeStr;
+            if (suffix == "JPG" || suffix == "JPEG") {
+                typeStr = "JPEG 图像";
+            } else if (suffix == "PNG") {
+                typeStr = "PNG 图像";
+            } else if (suffix == "BMP") {
+                typeStr = "BMP 图像";
+            } else {
+                typeStr = suffix + " 文件";
+            }
+            ui->fileTypeLabel->setText("文件类型：" + typeStr);
+        } else {
+            // 如果没有文件路径，使用图像数据估算
+            QImage currentImage = subWindow->getCurrentImage();
+            if (!currentImage.isNull()) {
+                qint64 estimatedSize = currentImage.sizeInBytes();
+                QString sizeStr;
+                if (estimatedSize < 1024) {
+                    sizeStr = QString("%1 B").arg(estimatedSize);
+                } else if (estimatedSize < 1024 * 1024) {
+                    sizeStr = QString("%1 KB").arg(estimatedSize / 1024.0, 0, 'f', 1);
+                } else if (estimatedSize < 1024 * 1024 * 1024) {
+                    sizeStr = QString("%1 MB").arg(estimatedSize / (1024.0 * 1024.0), 0, 'f', 1);
+                } else {
+                    sizeStr = QString("%1 GB").arg(estimatedSize / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+                }
+                ui->fileSizeLabel->setText("文件大小：≈" + sizeStr);
+                
+                QString formatStr;
+                switch (currentImage.format()) {
+                    case QImage::Format_RGB32:
+                    case QImage::Format_ARGB32:
+                        formatStr = "RGB 图像";
+                        break;
+                    case QImage::Format_Grayscale8:
+                        formatStr = "灰度图像";
+                        break;
+                    default:
+                        formatStr = "图像文件";
+                        break;
+                }
+                ui->fileTypeLabel->setText("文件类型：" + formatStr);
+            } else {
+                ui->fileSizeLabel->setText("文件大小：--");
+                ui->fileTypeLabel->setText("文件类型：--");
+            }
+        }
+        
+        // 分辨率
+        QImage currentImage = subWindow->getCurrentImage();
+        if (!currentImage.isNull()) {
+            QString resolution = QString("%1 × %2").arg(currentImage.width()).arg(currentImage.height());
+            ui->resolutionLabel->setText("分辨率：" + resolution);
+        } else {
+            ui->resolutionLabel->setText("分辨率：--");
+        }
     }
 }
 
