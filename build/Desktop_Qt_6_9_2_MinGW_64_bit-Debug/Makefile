@@ -320,7 +320,8 @@ Makefile: ../../PSvidio.pro E:/Apps/Qt/6.9.2/mingw_64/mkspecs/win32-g++/qmake.co
 		E:/Apps/Qt/6.9.2/mingw_64/lib/Qt6Network.prl \
 		E:/Apps/Qt/6.9.2/mingw_64/lib/Qt6Core.prl \
 		E:/Apps/Qt/6.9.2/mingw_64/lib/Qt6EntryPoint.prl \
-		E:/Apps/Qt/6.9.2/mingw_64/mkspecs/features/build_pass.prf
+		E:/Apps/Qt/6.9.2/mingw_64/mkspecs/features/build_pass.prf \
+		../../resources.qrc
 	$(QMAKE) -o Makefile ..\..\PSvidio.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 E:/Apps/Qt/6.9.2/mingw_64/mkspecs/features/spec_pre.prf:
 E:/Apps/Qt/6.9.2/mingw_64/mkspecs/features/device_config.prf:
@@ -573,6 +574,7 @@ E:/Apps/Qt/6.9.2/mingw_64/lib/Qt6Network.prl:
 E:/Apps/Qt/6.9.2/mingw_64/lib/Qt6Core.prl:
 E:/Apps/Qt/6.9.2/mingw_64/lib/Qt6EntryPoint.prl:
 E:/Apps/Qt/6.9.2/mingw_64/mkspecs/features/build_pass.prf:
+../../resources.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\..\PSvidio.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 

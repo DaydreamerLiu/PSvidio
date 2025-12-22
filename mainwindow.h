@@ -73,5 +73,18 @@ private:
     int m_edgeThreshold;
     // 用于延迟处理的定时器
     QTimer *m_timer; // 用于滑块停止拖动后延迟处理
+    
+    // 工具栏
+    QToolBar *m_mainToolBar;
+    QToolBar *m_parameterToolBar;
+    
+    // 私有方法
+    void applyModernStyle();
+    void setupMainToolBar();
+    void setupParameterToolBar();
+    void createSliderControl(QLabel* &label, QSlider* &slider, QLabel* &valueLabel, 
+                           const QString& title, int min, int max, int value, 
+                           const QString& tooltip, const char* valueChangedSlot,
+                           const char* sliderPressedSlot, const char* sliderReleasedSlot);
 };
 #endif // MAINWINDOW_H

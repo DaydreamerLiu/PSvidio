@@ -7,10 +7,14 @@
 #include "gammacorrectioncommand.h"
 #include "edgedetectioncommand.h"
 #include "mosaiccommand.h"
+#include "collapsiblewidget.h" // 可折叠控件
 #include <QFileDialog>
 #include <QToolBar>
 #include <QLabel>
 #include <QTimer>
+#include <QStyle>
+#include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -72,88 +76,14 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
     
-    // 5. 添加工具栏滑块控件
-    // 创建一个新的工具栏用于放置滑块控件
-    QToolBar *toolBar = addToolBar("ImageToolBar");
-    toolBar->setVisible(true); // 确保工具栏默认可见
-    toolBar->setFloatable(true); // 允许工具栏浮动
-    toolBar->setMovable(true); // 允许工具栏移动
+    // 5. 应用现代样式
+    applyModernStyle();
     
-    // 创建二值化阈值控件
-    binaryLabel = new QLabel("二值化阈值：", this);
-    m_binaryThresholdSlider = new QSlider(Qt::Horizontal, this);
-    m_binaryThresholdSlider->setRange(0, 255);
-    m_binaryThresholdSlider->setValue(m_binaryThreshold);
-    m_binaryThresholdSlider->setToolTip("二值化阈值 (0-255)");
-    m_binaryThresholdSlider->setMinimumWidth(150); // 设置最小宽度
-    m_binaryThresholdSlider->setMaximumWidth(200); // 设置最大宽度
-    m_binaryThresholdSlider->setFixedHeight(20); // 设置固定高度
-    m_binaryThresholdSlider->setEnabled(false); // 默认不可用
-    binaryValueLabel = new QLabel(QString::number(m_binaryThreshold), this);
-    binaryValueLabel->setFixedWidth(40); // 固定宽度以对齐
-    binaryValueLabel->setAlignment(Qt::AlignCenter);
-    connect(m_binaryThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_binaryThresholdSlider_valueChanged);
-    connect(m_binaryThresholdSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
-    connect(m_binaryThresholdSlider, &QSlider::sliderReleased, this, &MainWindow::on_binaryThresholdSlider_released);
+    // 6. 创建主工具栏（包含所有操作的快捷按钮）
+    setupMainToolBar();
     
-    // 创建伽马变换值控件
-    gammaLabel = new QLabel("伽马值：", this);
-    m_gammaValueSlider = new QSlider(Qt::Horizontal, this);
-    m_gammaValueSlider->setRange(1, 30); // 1-30表示1.0-3.0
-    m_gammaValueSlider->setValue(m_gammaValue * 10);
-    m_gammaValueSlider->setToolTip("伽马值 (1.0-3.0)");
-    m_gammaValueSlider->setMinimumWidth(150); // 设置最小宽度
-    m_gammaValueSlider->setMaximumWidth(200); // 设置最大宽度
-    m_gammaValueSlider->setFixedHeight(20); // 设置固定高度
-    m_gammaValueSlider->setEnabled(false); // 默认不可用
-    gammaValueLabel = new QLabel(QString::number(m_gammaValue, 'f', 1), this);
-    gammaValueLabel->setFixedWidth(40); // 固定宽度以对齐
-    gammaValueLabel->setAlignment(Qt::AlignCenter);
-    connect(m_gammaValueSlider, &QSlider::valueChanged, this, &MainWindow::on_gammaValueSlider_valueChanged);
-    connect(m_gammaValueSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
-    connect(m_gammaValueSlider, &QSlider::sliderReleased, this, &MainWindow::on_gammaValueSlider_released);
-    
-    // 创建边缘检测阈值控件
-    edgeLabel = new QLabel("边缘阈值：", this);
-    m_edgeThresholdSlider = new QSlider(Qt::Horizontal, this);
-    m_edgeThresholdSlider->setRange(0, 200); // 0-200的阈值范围
-    m_edgeThresholdSlider->setValue(m_edgeThreshold);
-    m_edgeThresholdSlider->setToolTip("边缘检测阈值 (0-200)");
-    m_edgeThresholdSlider->setMinimumWidth(150); // 设置最小宽度
-    m_edgeThresholdSlider->setMaximumWidth(200); // 设置最大宽度
-    m_edgeThresholdSlider->setFixedHeight(20); // 设置固定高度
-    m_edgeThresholdSlider->setEnabled(false); // 默认不可用
-    edgeValueLabel = new QLabel(QString::number(m_edgeThreshold), this);
-    edgeValueLabel->setFixedWidth(40); // 固定宽度以对齐
-    edgeValueLabel->setAlignment(Qt::AlignCenter);
-    connect(m_edgeThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_edgeThresholdSlider_valueChanged);
-    connect(m_edgeThresholdSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
-    connect(m_edgeThresholdSlider, &QSlider::sliderReleased, this, &MainWindow::on_edgeThresholdSlider_released);
-    
-    // 将控件添加到工具栏
-    toolBar->addWidget(binaryLabel);
-    toolBar->addWidget(m_binaryThresholdSlider);
-    toolBar->addWidget(binaryValueLabel);
-    toolBar->addWidget(gammaLabel);
-    toolBar->addWidget(m_gammaValueSlider);
-    toolBar->addWidget(gammaValueLabel);
-    toolBar->addWidget(edgeLabel);
-    toolBar->addWidget(m_edgeThresholdSlider);
-    toolBar->addWidget(edgeValueLabel);
-    
-    // 默认隐藏所有标签、滑块和数值显示
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    edgeValueLabel->setVisible(false);
-    
-    // 确保工具栏在所有其他控件之上
-    toolBar->raise();
+    // 7. 创建可折叠的参数调节工具栏
+    setupParameterToolBar();
 }
 
 MainWindow::~MainWindow()
@@ -272,19 +202,14 @@ void MainWindow::on_action_G_triggered()
     FileViewSubWindow *imageWin = currentImageSubWindow();
     if (!imageWin) return;
 
-    // 隐藏所有滑块、标签和数值显示
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    m_binaryThresholdSlider->setEnabled(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    m_gammaValueSlider->setEnabled(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    m_edgeThresholdSlider->setEnabled(false);
-    edgeValueLabel->setVisible(false);
+    // 折叠所有参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
+    
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(true);
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(true);
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(true);
 
     // 根据窗口类型选择命令应用方法
     GrayscaleCommand *command = new GrayscaleCommand(imageWin->getCurrentImage());
@@ -301,20 +226,16 @@ void MainWindow::on_action_T_triggered()
     FileViewSubWindow *imageWin = currentImageSubWindow();
     if (!imageWin) return;
 
-    // 显示二值化阈值滑块、标签和数值显示，隐藏其他控件
-    binaryLabel->setVisible(true);
-    m_binaryThresholdSlider->setVisible(true);
-    m_binaryThresholdSlider->setEnabled(true);
-    binaryValueLabel->setVisible(true);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    m_gammaValueSlider->setEnabled(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    m_edgeThresholdSlider->setEnabled(false);
-    edgeValueLabel->setVisible(false);
-
+    // 展开二值化参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(false);
+    
+    // 折叠其他参数控件
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(true);
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(true);
+    
     // 更新数值显示
     binaryValueLabel->setText(QString::number(m_binaryThreshold));
     
@@ -333,19 +254,14 @@ void MainWindow::on_action_2_triggered()
     FileViewSubWindow *imageWin = currentImageSubWindow();
     if (!imageWin) return;
 
-    // 隐藏所有滑块、标签和数值显示
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    m_binaryThresholdSlider->setEnabled(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    m_gammaValueSlider->setEnabled(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    m_edgeThresholdSlider->setEnabled(false);
-    edgeValueLabel->setVisible(false);
+    // 折叠所有参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
+    
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(true);
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(true);
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(true);
 
     // 根据窗口类型选择命令应用方法
     MeanFilterCommand *command = new MeanFilterCommand(imageWin->getCurrentImage());
@@ -362,19 +278,15 @@ void MainWindow::on_action_3_triggered()
     FileViewSubWindow *imageWin = currentImageSubWindow();
     if (!imageWin) return;
 
-    // 显示伽马值滑块、标签和数值显示，隐藏其他控件
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    m_binaryThresholdSlider->setEnabled(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(true);
-    m_gammaValueSlider->setVisible(true);
-    m_gammaValueSlider->setEnabled(true);
-    gammaValueLabel->setVisible(true);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    m_edgeThresholdSlider->setEnabled(false);
-    edgeValueLabel->setVisible(false);
+    // 展开伽马变换参数控件
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(false);
+    
+    // 折叠其他参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(true);
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(true);
 
     // 更新数值显示
     gammaValueLabel->setText(QString::number(m_gammaValue, 'f', 1));
@@ -394,19 +306,15 @@ void MainWindow::on_action_4_triggered()
     FileViewSubWindow *imageWin = currentImageSubWindow();
     if (!imageWin) return;
 
-    // 显示边缘检测阈值滑块、标签和数值显示，隐藏其他控件
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    m_binaryThresholdSlider->setEnabled(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    m_gammaValueSlider->setEnabled(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(true);
-    m_edgeThresholdSlider->setVisible(true);
-    m_edgeThresholdSlider->setEnabled(true);
-    edgeValueLabel->setVisible(true);
+    // 展开边缘检测参数控件
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(false);
+    
+    // 折叠其他参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(true);
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(true);
 
     // 更新数值显示
     edgeValueLabel->setText(QString::number(m_edgeThreshold));
@@ -426,19 +334,14 @@ void MainWindow::on_action_Mosaic_triggered()
     FileViewSubWindow *imageWin = currentImageSubWindow();
     if (!imageWin) return;
 
-    // 隐藏所有滑块、标签和数值显示
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    m_binaryThresholdSlider->setEnabled(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    m_gammaValueSlider->setEnabled(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    m_edgeThresholdSlider->setEnabled(false);
-    edgeValueLabel->setVisible(false);
+    // 折叠所有参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
+    
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(true);
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(true);
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(true);
 
     // 创建并应用局部马赛克命令
     // 这里使用固定区域和块大小，实际应用中可以让用户选择区域
@@ -575,54 +478,233 @@ void MainWindow::on_edgeThresholdSlider_released()
 // 处理命令应用信号
 void MainWindow::onCommandApplied(ImageCommand *command)
 {
-    // 默认隐藏所有滑块、标签和数值显示
-    binaryLabel->setVisible(false);
-    m_binaryThresholdSlider->setVisible(false);
-    m_binaryThresholdSlider->setEnabled(false);
-    binaryValueLabel->setVisible(false);
-    gammaLabel->setVisible(false);
-    m_gammaValueSlider->setVisible(false);
-    m_gammaValueSlider->setEnabled(false);
-    gammaValueLabel->setVisible(false);
-    edgeLabel->setVisible(false);
-    m_edgeThresholdSlider->setVisible(false);
-    m_edgeThresholdSlider->setEnabled(false);
-    edgeValueLabel->setVisible(false);
+    // 首先折叠所有参数控件
+    CollapsibleWidget *binaryCollapsible = findChild<CollapsibleWidget*>("binaryCollapsible");
+    CollapsibleWidget *gammaCollapsible = findChild<CollapsibleWidget*>("gammaCollapsible");
+    CollapsibleWidget *edgeCollapsible = findChild<CollapsibleWidget*>("edgeCollapsible");
     
-    // 根据命令类型更新滑块、标签和数值显示
+    if (binaryCollapsible) binaryCollapsible->setCollapsed(true);
+    if (gammaCollapsible) gammaCollapsible->setCollapsed(true);
+    if (edgeCollapsible) edgeCollapsible->setCollapsed(true);
+    
+    // 根据命令类型更新滑块值并展开对应的折叠控件
     if (BinaryCommand *binaryCommand = dynamic_cast<BinaryCommand*>(command)) {
         // 二值化命令
         m_binaryThreshold = binaryCommand->threshold();
         m_binaryThresholdSlider->setValue(m_binaryThreshold);
         binaryValueLabel->setText(QString::number(m_binaryThreshold));
         
-        // 显示二值化控件
-        binaryLabel->setVisible(true);
-        m_binaryThresholdSlider->setVisible(true);
-        m_binaryThresholdSlider->setEnabled(true);
-        binaryValueLabel->setVisible(true);
+        // 展开二值化参数控件
+        if (binaryCollapsible) binaryCollapsible->setCollapsed(false);
+        
     } else if (GammaCorrectionCommand *gammaCommand = dynamic_cast<GammaCorrectionCommand*>(command)) {
         // 伽马变换命令
         m_gammaValue = gammaCommand->gamma();
         m_gammaValueSlider->setValue(m_gammaValue * 10);
         gammaValueLabel->setText(QString::number(m_gammaValue, 'f', 1));
         
-        // 显示伽马变换控件
-        gammaLabel->setVisible(true);
-        m_gammaValueSlider->setVisible(true);
-        m_gammaValueSlider->setEnabled(true);
-        gammaValueLabel->setVisible(true);
+        // 展开伽马变换参数控件
+        if (gammaCollapsible) gammaCollapsible->setCollapsed(false);
+        
     } else if (EdgeDetectionCommand *edgeCommand = dynamic_cast<EdgeDetectionCommand*>(command)) {
         // 边缘检测命令
         m_edgeThreshold = edgeCommand->threshold();
         m_edgeThresholdSlider->setValue(m_edgeThreshold);
         edgeValueLabel->setText(QString::number(m_edgeThreshold));
         
-        // 显示边缘检测控件
-        edgeLabel->setVisible(true);
-        m_edgeThresholdSlider->setVisible(true);
-        m_edgeThresholdSlider->setEnabled(true);
-        edgeValueLabel->setVisible(true);
+        // 展开边缘检测参数控件
+        if (edgeCollapsible) edgeCollapsible->setCollapsed(false);
     }
+}
+
+// 应用现代样式
+void MainWindow::applyModernStyle()
+{
+    // 加载样式表
+    QFile styleFile(":/resources/styles.qss");
+    if (styleFile.open(QFile::ReadOnly)) {
+        QTextStream stream(&styleFile);
+        QString style = stream.readAll();
+        setStyleSheet(style);
+        styleFile.close();
+    }
+    
+    // 设置窗口标题和图标
+    setWindowTitle("图像处理工具");
+    setWindowIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
+    
+    // 设置窗口最小尺寸
+    setMinimumSize(800, 600);
+}
+
+// 设置主工具栏
+void MainWindow::setupMainToolBar()
+{
+    m_mainToolBar = addToolBar("主工具栏");
+    m_mainToolBar->setObjectName("mainToolBar");
+    m_mainToolBar->setMovable(true);
+    m_mainToolBar->setFloatable(true);
+    m_mainToolBar->setIconSize(QSize(24, 24));
+    
+    // 文件操作
+    m_mainToolBar->addAction(ui->actionOpen_O);
+    m_mainToolBar->addAction(ui->actionSaveVideo);
+    m_mainToolBar->addSeparator();
+    
+    // 撤销重做
+    m_mainToolBar->addAction(ui->action_Z);
+    m_mainToolBar->addAction(ui->action_Y);
+    m_mainToolBar->addSeparator();
+    
+    // 图像处理操作
+    m_mainToolBar->addAction(ui->action_G);      // 灰度化
+    m_mainToolBar->addAction(ui->action_T);      // 二值化
+    m_mainToolBar->addAction(ui->action_2);      // 滤波
+    m_mainToolBar->addAction(ui->action_3);      // 伽马变换
+    m_mainToolBar->addAction(ui->action_4);      // 边缘检测
+    
+    // 设置工具按钮样式
+    for (QAction *action : m_mainToolBar->actions()) {
+        if (action->isSeparator()) continue;
+        
+        // 设置图标（如果没有图标，使用标准图标）
+        if (action->icon().isNull()) {
+            QString text = action->text();
+            if (text.contains("打开")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+            } else if (text.contains("保存")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+            } else if (text.contains("撤销")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
+            } else if (text.contains("重做")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
+            } else if (text.contains("灰度")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_DesktopIcon));
+            } else if (text.contains("二值")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+            } else if (text.contains("滤波")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
+            } else if (text.contains("伽马")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_DriveCDIcon));
+            } else if (text.contains("边缘")) {
+                action->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+            }
+        }
+        
+        // 设置工具提示
+        action->setToolTip(action->text());
+    }
+}
+
+// 设置参数工具栏（可折叠）
+void MainWindow::setupParameterToolBar()
+{
+    m_parameterToolBar = addToolBar("参数工具栏");
+    m_parameterToolBar->setObjectName("parameterToolBar");
+    m_parameterToolBar->setMovable(true);
+    m_parameterToolBar->setFloatable(true);
+    
+    // 创建可折叠控件
+    CollapsibleWidget *binaryCollapsible = new CollapsibleWidget("二值化参数", this);
+    binaryCollapsible->setObjectName("binaryCollapsible");
+    CollapsibleWidget *gammaCollapsible = new CollapsibleWidget("伽马变换参数", this);
+    gammaCollapsible->setObjectName("gammaCollapsible");
+    CollapsibleWidget *edgeCollapsible = new CollapsibleWidget("边缘检测参数", this);
+    edgeCollapsible->setObjectName("edgeCollapsible");
+    
+    // 创建二值化参数控件
+    QWidget *binaryWidget = new QWidget(this);
+    QHBoxLayout *binaryLayout = new QHBoxLayout(binaryWidget);
+    binaryLayout->setContentsMargins(0, 0, 0, 0);
+    binaryLayout->setSpacing(8);
+    
+    binaryLabel = new QLabel("阈值:", this);
+    m_binaryThresholdSlider = new QSlider(Qt::Horizontal, this);
+    m_binaryThresholdSlider->setRange(0, 255);
+    m_binaryThresholdSlider->setValue(m_binaryThreshold);
+    m_binaryThresholdSlider->setFixedWidth(150);
+    binaryValueLabel = new QLabel(QString::number(m_binaryThreshold), this);
+    binaryValueLabel->setFixedWidth(40);
+    binaryValueLabel->setAlignment(Qt::AlignCenter);
+    
+    binaryLayout->addWidget(binaryLabel);
+    binaryLayout->addWidget(m_binaryThresholdSlider);
+    binaryLayout->addWidget(binaryValueLabel);
+    binaryLayout->addStretch();
+    
+    // 创建伽马变换参数控件
+    QWidget *gammaWidget = new QWidget(this);
+    QHBoxLayout *gammaLayout = new QHBoxLayout(gammaWidget);
+    gammaLayout->setContentsMargins(0, 0, 0, 0);
+    gammaLayout->setSpacing(8);
+    
+    gammaLabel = new QLabel("伽马值:", this);
+    m_gammaValueSlider = new QSlider(Qt::Horizontal, this);
+    m_gammaValueSlider->setRange(10, 30); // 1.0-3.0
+    m_gammaValueSlider->setValue(m_gammaValue * 10);
+    m_gammaValueSlider->setFixedWidth(150);
+    gammaValueLabel = new QLabel(QString::number(m_gammaValue, 'f', 1), this);
+    gammaValueLabel->setFixedWidth(40);
+    gammaValueLabel->setAlignment(Qt::AlignCenter);
+    
+    gammaLayout->addWidget(gammaLabel);
+    gammaLayout->addWidget(m_gammaValueSlider);
+    gammaLayout->addWidget(gammaValueLabel);
+    gammaLayout->addStretch();
+    
+    // 创建边缘检测参数控件
+    QWidget *edgeWidget = new QWidget(this);
+    QHBoxLayout *edgeLayout = new QHBoxLayout(edgeWidget);
+    edgeLayout->setContentsMargins(0, 0, 0, 0);
+    edgeLayout->setSpacing(8);
+    
+    edgeLabel = new QLabel("阈值:", this);
+    m_edgeThresholdSlider = new QSlider(Qt::Horizontal, this);
+    m_edgeThresholdSlider->setRange(0, 200);
+    m_edgeThresholdSlider->setValue(m_edgeThreshold);
+    m_edgeThresholdSlider->setFixedWidth(150);
+    edgeValueLabel = new QLabel(QString::number(m_edgeThreshold), this);
+    edgeValueLabel->setFixedWidth(40);
+    edgeValueLabel->setAlignment(Qt::AlignCenter);
+    
+    edgeLayout->addWidget(edgeLabel);
+    edgeLayout->addWidget(m_edgeThresholdSlider);
+    edgeLayout->addWidget(edgeValueLabel);
+    edgeLayout->addStretch();
+    
+    // 设置可折叠控件内容
+    binaryCollapsible->setContent(binaryWidget);
+    gammaCollapsible->setContent(gammaWidget);
+    edgeCollapsible->setContent(edgeWidget);
+    
+    // 默认折叠所有参数控件
+    binaryCollapsible->setCollapsed(true);
+    gammaCollapsible->setCollapsed(true);
+    edgeCollapsible->setCollapsed(true);
+    
+    // 将可折叠控件添加到工具栏
+    QWidget *parameterContainer = new QWidget(this);
+    QVBoxLayout *containerLayout = new QVBoxLayout(parameterContainer);
+    containerLayout->setContentsMargins(8, 8, 8, 8);
+    containerLayout->setSpacing(4);
+    containerLayout->addWidget(binaryCollapsible);
+    containerLayout->addWidget(gammaCollapsible);
+    containerLayout->addWidget(edgeCollapsible);
+    containerLayout->addStretch();
+    
+    m_parameterToolBar->addWidget(parameterContainer);
+    
+    // 连接滑块信号
+    connect(m_binaryThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_binaryThresholdSlider_valueChanged);
+    connect(m_binaryThresholdSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
+    connect(m_binaryThresholdSlider, &QSlider::sliderReleased, this, &MainWindow::on_binaryThresholdSlider_released);
+    
+    connect(m_gammaValueSlider, &QSlider::valueChanged, this, &MainWindow::on_gammaValueSlider_valueChanged);
+    connect(m_gammaValueSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
+    connect(m_gammaValueSlider, &QSlider::sliderReleased, this, &MainWindow::on_gammaValueSlider_released);
+    
+    connect(m_edgeThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_edgeThresholdSlider_valueChanged);
+    connect(m_edgeThresholdSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
+    connect(m_edgeThresholdSlider, &QSlider::sliderReleased, this, &MainWindow::on_edgeThresholdSlider_released);
 }
 
