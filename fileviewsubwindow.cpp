@@ -128,6 +128,23 @@ void FileViewSubWindow::applyImageCommandToVideo(ImageCommand *command)
     // 启用视频处理
     m_isProcessingEnabled = true;
     
+    // 立即刷新当前帧以显示处理效果
+    if (m_mediaPlayer && m_graphicsScene && m_graphicsView && m_videoPixmapItem) {
+        // 获取当前视频位置
+        qint64 currentPosition = m_mediaPlayer->position();
+        
+        // 稍微移动位置再返回，强制刷新当前帧
+        qint64 tempPosition = qMax(0LL, currentPosition - 100); // 回退100ms
+        m_mediaPlayer->setPosition(tempPosition);
+        
+        // 使用QTimer延迟恢复原始位置，确保帧处理完成
+        QTimer::singleShot(50, this, [=]() {
+            if (m_mediaPlayer) {
+                m_mediaPlayer->setPosition(currentPosition);
+            }
+        });
+    }
+    
     // 通知用户视频处理命令已应用
     qDebug() << "视频处理命令已应用到历史记录，视频将实时显示处理效果";
     
@@ -354,6 +371,20 @@ void FileViewSubWindow::undo()
                 m_frameCaptureTimer->stop();
             }
         }
+        
+        // 立即刷新当前帧以显示撤销效果
+        if (m_mediaPlayer && m_historyIndex >= 0) {
+            qint64 currentPosition = m_mediaPlayer->position();
+            qint64 tempPosition = qMax(0LL, currentPosition - 100);
+            m_mediaPlayer->setPosition(tempPosition);
+            
+            QTimer::singleShot(50, this, [=]() {
+                if (m_mediaPlayer) {
+                    m_mediaPlayer->setPosition(currentPosition);
+                }
+            });
+        }
+        
         emit commandApplied(m_historyIndex >= 0 ? m_commandHistory[m_historyIndex] : nullptr);
     } else {
         // 图片模式下的处理
@@ -445,6 +476,20 @@ void FileViewSubWindow::redo()
         if (m_frameCaptureTimer && !m_frameCaptureTimer->isActive()) {
             m_frameCaptureTimer->start(33); // 约30fps
         }
+        
+        // 立即刷新当前帧以显示重做效果
+        if (m_mediaPlayer) {
+            qint64 currentPosition = m_mediaPlayer->position();
+            qint64 tempPosition = qMax(0LL, currentPosition - 100);
+            m_mediaPlayer->setPosition(tempPosition);
+            
+            QTimer::singleShot(50, this, [=]() {
+                if (m_mediaPlayer) {
+                    m_mediaPlayer->setPosition(currentPosition);
+                }
+            });
+        }
+        
         emit commandApplied(m_commandHistory[m_historyIndex]);
     } else {
         // 图片模式下的处理
