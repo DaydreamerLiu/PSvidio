@@ -55,13 +55,94 @@
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
    <property name="windowTitle">
-    <string>工具箱</string>
+    <string>控制面板</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QGroupBox" name="fileInfoGroupBox">
+       <property name="title">
+        <string>文件信息</string>
+       </property>
+       <layout class="QVBoxLayout" name="fileInfoLayout">
+        <item>
+         <widget class="QLabel" name="fileNameLabel">
+          <property name="text">
+           <string>文件名：未选择</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="fileSizeLabel">
+          <property name="text">
+           <string>文件大小：--</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="fileTypeLabel">
+          <property name="text">
+           <string>文件类型：--</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="resolutionLabel">
+          <property name="text">
+           <string>分辨率：--</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="scaleGroupBox">
+       <property name="title">
+        <string>缩放控制</string>
+       </property>
+       <layout class="QVBoxLayout" name="scaleLayout">
+        <item>
+         <widget class="QLabel" name="labelScale">
+          <property name="text">
+           <string>当前缩放：100%</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="horizontalSliderScale">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>500</number>
+          </property>
+          <property name="singleStep">
+           <number>15</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TickPosition::TicksBelow</enum>
+          </property>
+          <property name="tickInterval">
+           <number>50</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
      <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
@@ -74,38 +155,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelScale">
-       <property name="text">
-        <string>当前缩放：100%</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSlider" name="horizontalSliderScale">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>500</number>
-       </property>
-       <property name="singleStep">
-        <number>15</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::TickPosition::TicksBelow</enum>
-       </property>
-       <property name="tickInterval">
-        <number>50</number>
-       </property>
-      </widget>
      </item>
     </layout>
    </widget>

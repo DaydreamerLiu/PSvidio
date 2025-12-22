@@ -78,10 +78,17 @@ private:
     QToolBar *m_mainToolBar;
     QToolBar *m_parameterToolBar;
     
+    // 文件信息标签
+    QLabel *m_fileNameLabel;
+    QLabel *m_fileSizeLabel;
+    QLabel *m_fileTypeLabel;
+    QLabel *m_resolutionLabel;
+    
     // 私有方法
     void applyModernStyle();
     void setupMainToolBar();
     void setupParameterToolBar();
+    void updateFileInfo(FileViewSubWindow *subWindow);
     void createSliderControl(QLabel* &label, QSlider* &slider, QLabel* &valueLabel, 
                            const QString& title, int min, int max, int value, 
                            const QString& tooltip, const char* valueChangedSlot,

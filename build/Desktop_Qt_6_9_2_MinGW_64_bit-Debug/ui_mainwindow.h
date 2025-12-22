@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMdiArea>
@@ -50,9 +51,17 @@ public:
     QDockWidget *dockWidget;
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout;
-    QSpacerItem *verticalSpacer;
+    QGroupBox *fileInfoGroupBox;
+    QVBoxLayout *fileInfoLayout;
+    QLabel *fileNameLabel;
+    QLabel *fileSizeLabel;
+    QLabel *fileTypeLabel;
+    QLabel *resolutionLabel;
+    QGroupBox *scaleGroupBox;
+    QVBoxLayout *scaleLayout;
     QLabel *labelScale;
     QSlider *horizontalSliderScale;
+    QSpacerItem *verticalSpacer;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -106,16 +115,44 @@ public:
         dockWidgetContents->setObjectName("dockWidgetContents");
         verticalLayout = new QVBoxLayout(dockWidgetContents);
         verticalLayout->setObjectName("verticalLayout");
-        verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+        fileInfoGroupBox = new QGroupBox(dockWidgetContents);
+        fileInfoGroupBox->setObjectName("fileInfoGroupBox");
+        fileInfoLayout = new QVBoxLayout(fileInfoGroupBox);
+        fileInfoLayout->setObjectName("fileInfoLayout");
+        fileNameLabel = new QLabel(fileInfoGroupBox);
+        fileNameLabel->setObjectName("fileNameLabel");
+        fileNameLabel->setWordWrap(true);
 
-        verticalLayout->addItem(verticalSpacer);
+        fileInfoLayout->addWidget(fileNameLabel);
 
-        labelScale = new QLabel(dockWidgetContents);
+        fileSizeLabel = new QLabel(fileInfoGroupBox);
+        fileSizeLabel->setObjectName("fileSizeLabel");
+
+        fileInfoLayout->addWidget(fileSizeLabel);
+
+        fileTypeLabel = new QLabel(fileInfoGroupBox);
+        fileTypeLabel->setObjectName("fileTypeLabel");
+
+        fileInfoLayout->addWidget(fileTypeLabel);
+
+        resolutionLabel = new QLabel(fileInfoGroupBox);
+        resolutionLabel->setObjectName("resolutionLabel");
+
+        fileInfoLayout->addWidget(resolutionLabel);
+
+
+        verticalLayout->addWidget(fileInfoGroupBox);
+
+        scaleGroupBox = new QGroupBox(dockWidgetContents);
+        scaleGroupBox->setObjectName("scaleGroupBox");
+        scaleLayout = new QVBoxLayout(scaleGroupBox);
+        scaleLayout->setObjectName("scaleLayout");
+        labelScale = new QLabel(scaleGroupBox);
         labelScale->setObjectName("labelScale");
 
-        verticalLayout->addWidget(labelScale);
+        scaleLayout->addWidget(labelScale);
 
-        horizontalSliderScale = new QSlider(dockWidgetContents);
+        horizontalSliderScale = new QSlider(scaleGroupBox);
         horizontalSliderScale->setObjectName("horizontalSliderScale");
         horizontalSliderScale->setMinimum(1);
         horizontalSliderScale->setMaximum(500);
@@ -125,7 +162,14 @@ public:
         horizontalSliderScale->setTickPosition(QSlider::TickPosition::TicksBelow);
         horizontalSliderScale->setTickInterval(50);
 
-        verticalLayout->addWidget(horizontalSliderScale);
+        scaleLayout->addWidget(horizontalSliderScale);
+
+
+        verticalLayout->addWidget(scaleGroupBox);
+
+        verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        verticalLayout->addItem(verticalSpacer);
 
         dockWidget->setWidget(dockWidgetContents);
         MainWindow->addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, dockWidget);
@@ -163,7 +207,13 @@ public:
         actionSaveVideo->setText(QCoreApplication::translate("MainWindow", "\344\277\235\345\255\230\350\247\206\351\242\221", nullptr));
         menu_F->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266(&F)", nullptr));
         menu_E->setTitle(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", nullptr));
-        dockWidget->setWindowTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\347\256\261", nullptr));
+        dockWidget->setWindowTitle(QCoreApplication::translate("MainWindow", "\346\216\247\345\210\266\351\235\242\346\235\277", nullptr));
+        fileInfoGroupBox->setTitle(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266\344\277\241\346\201\257", nullptr));
+        fileNameLabel->setText(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266\345\220\215\357\274\232\346\234\252\351\200\211\346\213\251", nullptr));
+        fileSizeLabel->setText(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266\345\244\247\345\260\217\357\274\232--", nullptr));
+        fileTypeLabel->setText(QCoreApplication::translate("MainWindow", "\346\226\207\344\273\266\347\261\273\345\236\213\357\274\232--", nullptr));
+        resolutionLabel->setText(QCoreApplication::translate("MainWindow", "\345\210\206\350\276\250\347\216\207\357\274\232--", nullptr));
+        scaleGroupBox->setTitle(QCoreApplication::translate("MainWindow", "\347\274\251\346\224\276\346\216\247\345\210\266", nullptr));
         labelScale->setText(QCoreApplication::translate("MainWindow", "\345\275\223\345\211\215\347\274\251\346\224\276\357\274\232100%", nullptr));
     } // retranslateUi
 

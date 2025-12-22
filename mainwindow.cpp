@@ -15,6 +15,7 @@
 #include <QStyle>
 #include <QFile>
 #include <QTextStream>
+#include <QGroupBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -72,7 +73,12 @@ MainWindow::MainWindow(QWidget *parent)
                 connect(imageWin, &FileViewSubWindow::commandApplied, this, &MainWindow::onCommandApplied);
                 // 初始化当前命令
                 onCommandApplied(imageWin->getCurrentCommand());
+                // 更新文件信息
+                updateFileInfo(imageWin);
             }
+        } else {
+            // 没有激活窗口时清空文件信息
+            updateFileInfo(nullptr);
         }
     });
     
@@ -132,6 +138,11 @@ void MainWindow::on_actionOpen_O_triggered()
     // 激活第一个打开的窗口（Qt6 QMdiArea 子窗口列表）
     if (!ui->mdiArea->subWindowList().isEmpty()) {
         ui->mdiArea->setActiveSubWindow(ui->mdiArea->subWindowList().first());
+        // 更新文件信息
+        FileViewSubWindow *firstWin = qobject_cast<FileViewSubWindow*>(ui->mdiArea->subWindowList().first()->widget());
+        if (firstWin) {
+            updateFileInfo(firstWin);
+        }
     }
 }
 
@@ -515,26 +526,103 @@ void MainWindow::onCommandApplied(ImageCommand *command)
         // 展开边缘检测参数控件
         if (edgeCollapsible) edgeCollapsible->setCollapsed(false);
     }
+    
+    // 更新文件信息（特别是分辨率）
+    FileViewSubWindow *currentWin = currentImageSubWindow();
+    if (currentWin) {
+        updateFileInfo(currentWin);
+    }
 }
 
 // 应用现代样式
 void MainWindow::applyModernStyle()
 {
-    // 加载样式表
-    QFile styleFile(":/resources/styles.qss");
-    if (styleFile.open(QFile::ReadOnly)) {
-        QTextStream stream(&styleFile);
-        QString style = stream.readAll();
-        setStyleSheet(style);
-        styleFile.close();
-    }
+    // 应用现代样式
+    QString appStyle = R"(
+        /* DockWidget样式 */
+        QDockWidget {
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        
+        QDockWidget::title {
+            background-color: #e9ecef;
+            padding: 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        /* GroupBox样式 */
+        QGroupBox {
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            margin-top: 10px;
+            padding-top: 10px;
+            font-weight: bold;
+            color: #495057;
+            background-color: #ffffff;
+        }
+        
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 5px 0 5px;
+            background-color: #ffffff;
+        }
+        
+        /* 标签样式 */
+        QLabel {
+            color: #495057;
+            padding: 2px;
+        }
+        
+        /* 滑块样式 */
+        QSlider::groove:horizontal {
+            border: 1px solid #d0d0d0;
+            height: 4px;
+            background: #e9ecef;
+            margin: 2px 0;
+            border-radius: 2px;
+        }
+        
+        QSlider::handle:horizontal {
+            background: #007bff;
+            border: 1px solid #0056b3;
+            width: 16px;
+            height: 16px;
+            margin: -6px 0;
+            border-radius: 8px;
+        }
+        
+        QSlider::handle:horizontal:hover {
+            background: #0056b3;
+        }
+        
+        QSlider::sub-page:horizontal {
+            background: #007bff;
+            border-radius: 2px;
+        }
+        
+        /* 主窗口样式 */
+        QMainWindow {
+            background-color: #f8f9fa;
+        }
+    )";
+    
+    setStyleSheet(appStyle);
     
     // 设置窗口标题和图标
     setWindowTitle("图像处理工具");
-    setWindowIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
+    setWindowIcon(this->style()->standardIcon(QStyle::SP_ComputerIcon));
     
     // 设置窗口最小尺寸
     setMinimumSize(800, 600);
+    
+    // 设置dockWidget的初始大小
+    ui->dockWidget->setMinimumWidth(280);
+    ui->dockWidget->setMaximumWidth(350);
 }
 
 // 设置主工具栏
@@ -599,10 +687,23 @@ void MainWindow::setupMainToolBar()
 // 设置参数工具栏（可折叠）
 void MainWindow::setupParameterToolBar()
 {
-    m_parameterToolBar = addToolBar("参数工具栏");
-    m_parameterToolBar->setObjectName("parameterToolBar");
-    m_parameterToolBar->setMovable(true);
-    m_parameterToolBar->setFloatable(true);
+    // 获取dockWidget的内容区域
+    QWidget *dockContents = ui->dockWidget->widget();
+    if (!dockContents) {
+        return;
+    }
+    
+    QVBoxLayout *dockLayout = qobject_cast<QVBoxLayout*>(dockContents->layout());
+    if (!dockLayout) {
+        return;
+    }
+    
+    // 创建参数控制区域
+    QGroupBox *parameterGroupBox = new QGroupBox("参数调节", this);
+    parameterGroupBox->setObjectName("parameterGroupBox");
+    QVBoxLayout *parameterLayout = new QVBoxLayout(parameterGroupBox);
+    parameterLayout->setContentsMargins(8, 8, 8, 8);
+    parameterLayout->setSpacing(4);
     
     // 创建可折叠控件
     CollapsibleWidget *binaryCollapsible = new CollapsibleWidget("二值化参数", this);
@@ -682,17 +783,14 @@ void MainWindow::setupParameterToolBar()
     gammaCollapsible->setCollapsed(true);
     edgeCollapsible->setCollapsed(true);
     
-    // 将可折叠控件添加到工具栏
-    QWidget *parameterContainer = new QWidget(this);
-    QVBoxLayout *containerLayout = new QVBoxLayout(parameterContainer);
-    containerLayout->setContentsMargins(8, 8, 8, 8);
-    containerLayout->setSpacing(4);
-    containerLayout->addWidget(binaryCollapsible);
-    containerLayout->addWidget(gammaCollapsible);
-    containerLayout->addWidget(edgeCollapsible);
-    containerLayout->addStretch();
+    // 将可折叠控件添加到参数区域
+    parameterLayout->addWidget(binaryCollapsible);
+    parameterLayout->addWidget(gammaCollapsible);
+    parameterLayout->addWidget(edgeCollapsible);
+    parameterLayout->addStretch();
     
-    m_parameterToolBar->addWidget(parameterContainer);
+    // 将参数控制区域添加到dockWidget
+    dockLayout->insertWidget(2, parameterGroupBox); // 插入到文件信息和缩放控制之间
     
     // 连接滑块信号
     connect(m_binaryThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_binaryThresholdSlider_valueChanged);
@@ -706,5 +804,76 @@ void MainWindow::setupParameterToolBar()
     connect(m_edgeThresholdSlider, &QSlider::valueChanged, this, &MainWindow::on_edgeThresholdSlider_valueChanged);
     connect(m_edgeThresholdSlider, &QSlider::sliderPressed, this, &MainWindow::on_sliderPressed);
     connect(m_edgeThresholdSlider, &QSlider::sliderReleased, this, &MainWindow::on_edgeThresholdSlider_released);
+}
+
+// 更新文件信息
+void MainWindow::updateFileInfo(FileViewSubWindow *subWindow)
+{
+    if (!subWindow) {
+        // 没有激活窗口时清空信息
+        ui->fileNameLabel->setText("文件名：未选择");
+        ui->fileSizeLabel->setText("文件大小：--");
+        ui->fileTypeLabel->setText("文件类型：--");
+        ui->resolutionLabel->setText("分辨率：--");
+        return;
+    }
+    
+    // 获取文件路径
+    QString filePath = subWindow->windowTitle(); // 假设窗口标题包含文件路径
+    if (filePath.isEmpty()) {
+        return;
+    }
+    
+    QFileInfo fileInfo(filePath);
+    
+    // 文件名
+    QString fileName = fileInfo.fileName();
+    if (fileName.length() > 30) {
+        fileName = fileName.left(27) + "...";
+    }
+    ui->fileNameLabel->setText("文件名：" + fileName);
+    
+    // 文件大小
+    qint64 fileSize = fileInfo.size();
+    QString sizeStr;
+    if (fileSize < 1024) {
+        sizeStr = QString("%1 B").arg(fileSize);
+    } else if (fileSize < 1024 * 1024) {
+        sizeStr = QString("%1 KB").arg(fileSize / 1024.0, 0, 'f', 1);
+    } else if (fileSize < 1024 * 1024 * 1024) {
+        sizeStr = QString("%1 MB").arg(fileSize / (1024.0 * 1024.0), 0, 'f', 1);
+    } else {
+        sizeStr = QString("%1 GB").arg(fileSize / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+    }
+    ui->fileSizeLabel->setText("文件大小：" + sizeStr);
+    
+    // 文件类型
+    QString suffix = fileInfo.suffix().toUpper();
+    QString typeStr;
+    if (suffix == "JPG" || suffix == "JPEG") {
+        typeStr = "JPEG 图像";
+    } else if (suffix == "PNG") {
+        typeStr = "PNG 图像";
+    } else if (suffix == "BMP") {
+        typeStr = "BMP 图像";
+    } else if (suffix == "MP4") {
+        typeStr = "MP4 视频";
+    } else if (suffix == "AVI") {
+        typeStr = "AVI 视频";
+    } else if (suffix == "MOV") {
+        typeStr = "MOV 视频";
+    } else {
+        typeStr = suffix + " 文件";
+    }
+    ui->fileTypeLabel->setText("文件类型：" + typeStr);
+    
+    // 分辨率
+    QImage currentImage = subWindow->getCurrentImage();
+    if (!currentImage.isNull()) {
+        QString resolution = QString("%1 × %2").arg(currentImage.width()).arg(currentImage.height());
+        ui->resolutionLabel->setText("分辨率：" + resolution);
+    } else {
+        ui->resolutionLabel->setText("分辨率：--");
+    }
 }
 
